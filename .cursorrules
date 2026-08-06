@@ -1,0 +1,10 @@
+- Project Type: Plotly Dash web application using Python, Pandas, and PostgreSQL (via a custom db_handler).
+- Framework Rules: 
+  - Always use dash.register_page() for pages in the /pages directory.
+  - Maintain existing callback structures, Output, Input, and State elements. Do not remove callbacks unless explicitly instructed.
+- Database: 
+  - Use db_handler.fetch_data_df() for SQL queries. Ensure parameters are passed safely as tuples to prevent SQL injection.
+- Styling & Assets:
+  - Keep class names aligned with the existing CSS setup in assets/. Do not invent new styling frameworks unless asked.
+- Coding Style:
+  - Write clean, production-ready Python code. Do not truncate code blocks with comments like "# ... rest of code remains the same"; always provide the complete file content when modifying files.

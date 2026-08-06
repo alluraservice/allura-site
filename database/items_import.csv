@@ -1,0 +1,217 @@
+item_name,type,category,Complete?,is_active,short_desc,long_desc
+DSA (Cathlab),Product,Radiology Department,FALSE,TRUE,A high-end interventional imaging system designed for real-time visualization of blood vessels during minimally invasive cardiac and vascular procedures.,"Digital Subtraction Angiography (DSA) system optimizing precision endovascular interventions.
+- Applications: Interventional cardiology, neuroradiology, peripheral vascular surgeries, and oncology treatment planning.
+- Key Tech: High-resolution digital flat-panel detectors, advanced real-time noise reduction, and automated 3D vessel reconstruction.
+- Benefits: Ultra-low radiation dose protocols, sharp vascular detailing by filtering out bone/tissue structures, and seamless ergonomics for surgical teams."
+Computed Tomography (CT-Scan),Product,Radiology Department,FALSE,TRUE,"An advanced diagnostic cross-sectional imaging scanner used to generate highly detailed, 3D anatomical slices of internal body structures rapidly.","Multi-slice CT system providing exceptional diagnostic speed and image accuracy.
+- Capabilities: From routine skull/chest/abdominal diagnostics to specialized high-speed coronary CT angiography (CCTA).
+- Key Tech: Fast gantry rotation times, sub-millimeter slice thicknesses, and AI-driven iterative image reconstruction.
+- Benefits: Significantly minimized patient exposure to radiation, ultra-rapid scans ideal for emergency trauma, and multi-planar volumetric rendering."
+MRI Machine (Hilum less),Product,Radiology Department,FALSE,TRUE,"A state-of-the-art magnetic resonance imaging system that uses sustainable, sealed cooling technology instead of conventional liquid helium refills.","Eco-friendly, high-efficiency superconductive MRI scanner redefining infrastructure dependencies.
+- Innovative Design: Utilizes fully sealed cooling loops or ultra-low helium technology, completely eliminating the need for external vent pipes or periodic helium top-ups.
+- Key Tech: High-gradient performance fields, wide-bore patient tunnels, and acoustic noise reduction software.
+- Benefits: Drastically reduced installation costs, zero risk of helium boil-off/quench hazards, and exceptional soft-tissue differentiation."
+Ultrasound Machines (General and 2d Echo/Cardio Vascular),Product,Radiology Department,FALSE,TRUE,"A versatile, non-invasive imaging portfolio optimized for diverse clinical applications spanning shared services, general radiology, and deep echocardiography studies.","Multi-disciplinary ultrasound systems offering deep tissue penetration and high-frame-rate dynamics.
+- Applications: Abdominal, OB/GYN, small parts diagnostics combined with high-performance strain and 2D echo cardiovascular testing.
+- Key Tech: Single-crystal probe architecture, color/spectral Doppler, and automated cardiac measurement algorithms (EF tracking).
+- Benefits: Ergonomic, portable/console profiles, continuous clear tissue imaging, and real-time hemodynamics monitoring."
+Mammography Machine,Product,Radiology Department,FALSE,TRUE,A dedicated low-dose X-ray imaging system engineered for high-contrast breast tissue examination and early breast cancer screening.,"High-precision digital mammography platform optimizing patient comfort and diagnostic yield.
+- Capabilities: Full-field digital mammography (FFDM) supporting routine screenings, diagnostic follow-ups, and stereotactic biopsies.
+- Key Tech: Smart, individualized compression paddles, dual-target X-ray tubes, and high-resolution amorphous selenium detectors.
+- Benefits: Significantly reduced physical breast discomfort, exceptional detection of micro-calcifications, and minimal radiation exposure."
+C-Arm Fluoroscopy Machine,Product,Radiology Department,FALSE,TRUE,"A mobile, counterbalanced surgical imaging system providing intensive, real-time fluoroscopic guidance directly inside the operating theater.","Compact intraoperative mobile X-ray system designed for versatile multi-angle navigation.
+- Applications: Orthopedic fixation, pain management injections, pacemaker placements, and general trauma surgery tracking.
+- Key Tech: High-definition image intensifiers or flat-panel digital detectors, integrated laser aimers, and dual-view touch screens.
+- Benefits: Space-saving design with fluid physical positioning, rich pulse fluoroscopy to reduce dose accumulation, and instant digital storage."
+"Digital X-ray Machines (Mobile, Floor Mounted and Ceiling Mounted)",Product,Radiology Department,FALSE,TRUE,"A complete suite of digital radiography systems customizable across flexible physical footprints to deliver instant, high-yield skeletal and chest imaging.","Full-scale direct digital X-ray configurations tailored for diverse clinical spaces.
+- Variants: Mobile (bedside/ICU utility), Floor-Mounted (compact clinic setups), and Ceiling-Mounted (heavy-duty, high-throughput hospital trauma suites).
+- Key Tech: High-frequency X-ray generators, automated tracking collimators, and integrated preview touchscreens.
+- Benefits: Instant digital image generation (under 3 seconds), effortless physical manipulation, and robust reliability for heavy patient workflows."
+Direct Radiography (Wireless Flat Panel Detector),Product,Radiology Department,FALSE,TRUE,"A portable, highly resilient digital detector panel that upgrades legacy film or CR rooms into instant digital X-ray environments via wireless connectivity.","Lightweight, high-sensitivity digital receptor panel facilitating fully untethered imaging workflows.
+- Capabilities: Drop-resistant robust housing matching standard cassette dimensions (14x17 or 17x17 inches) for seamless retrofitting.
+- Key Tech: Cesium Iodide (CsI) scintillator crystals, high-bandwidth secure Wi-Fi data transfer, and built-in drop sensor monitoring.
+- Benefits: Ultra-low dose requirement (high DQE), immediate diagnostic preview, and flexible placement for difficult bedside angles."
+Medical Dry (DICOM) LASER and Thermal printer,Product,Radiology Department,FALSE,TRUE,A high-throughput hardcopy output engine that produces exceptional diagnostic quality radiographic prints from medical imaging modalities via networked DICOM data.,"Premium imaging printers designed for crisp grayscale distribution on transparent and thermal films.
+- Tech Options: Precision photothermal dry laser processing or reliable micro-thermal direct printing headers.
+- Key Tech: Multi-modality DICOM network switching, automatic image density calibration, and multi-tray size flexibility.
+- Benefits: Completely daylight-safe film loading, maintenance-free dry operation with zero chemical waste, and sharp spatial resolution."
+Automatic X-ray film Processor machine,Product,Radiology Department,FALSE,TRUE,"A classic wet-chemical chemical processing unit designed to automatically wash, fix, develop, and dry analog analog X-ray films reliably.","Deep-tank automatic roller transport system engineered for traditional chemical film processing.
+- Capabilities: Processes standard analog film sizes with automated cycle-time control from developer to final dry stage.
+- Key Tech: Automatic chemical replenishment control, integrated tank temperature regulators, and anti-crystallization roller systems.
+- Benefits: High mechanical reliability, uniform contrast development, and consistent throughput for departments utilizing analog film portfolios."
+"Power Injector Machine for MRI, Cathlab and CT Scan Machines (Single and Dual head)",Product,Radiology Department,FALSE,TRUE,A programmable contrast delivery system engineered to precisely inject contrast media and saline flushes at specific velocities during diagnostic scanning.,"High-pressure, computerized fluid delivery injectors optimized for advanced contrast imaging protocols.
+- Configurations: Single-head (contrast only) and Dual-head (contrast + saline flush phase tracking) mobile pedestals or ceiling mounts.
+- Key Tech: Real-time pressure monitoring graphs, touch-screen control interfaces, and automated air-purge detection systems.
+- Benefits: Enhanced contrast bolus visualization, reduced artifact streaks via precise saline timing, and programmable multi-phase injection profiles."
+"RIS, PACS System and Tele-Radiography system",Product,Radiology Department,FALSE,TRUE,"An integrated software suite that manages patient radiology schedules, hosts diagnostic imaging records securely, and enables remote teleradiology reading.","Enterprise-grade medical imaging network infrastructure connecting clinical documentation with diagnostics.
+- Components: Radiology Information System (RIS) workflow scheduler, Picture Archiving and Communication System (PACS) long-term archive, and secure Tele-radiology gateways.
+- Key Tech: Universal web-based DICOM viewers, HL7 hospital interface compatibility, and end-to-end encrypted remote access routing.
+- Benefits: Eliminated film costs via digital workflows, rapid turnaround times through offsite diagnostic reading, and secure, permanent data archives."
+Advance Visualization and Artificial Intelligence (AI),Product,Radiology Department,FALSE,TRUE,A cutting-edge software suite leveraging deep learning algorithms to post-process complex image datasets and auto-detect critical clinical pathologies.,"AI-driven post-processing workspace designed to enhance diagnostic speed and accuracy for radiologists.
+- Capabilities: 3D organ segmentation, automated nodule detection, stroke/hemorrhage triage prioritizing, and advanced vascular mapping.
+- Key Tech: Neural network algorithms, cloud or localized server integration, and automated clinical reporting draft generation.
+- Benefits: Reduced diagnostic fatigue, accelerated identification of life-threatening emergencies, and quantified measurement tools."
+Ventilator Adult and Pedia,Product,Intensive Care Unit,FALSE,TRUE,"A critical-care life support machine engineered to deliver highly precise, invasive or non-invasive mechanical ventilation across adult and pediatric patients.","Premium intensive care ventilator featuring adaptive respiratory protection modes.
+- Capabilities: Full-spectrum ventilation ranging from neonates/pediatrics to larger adult patients with acute respiratory distress.
+- Key Tech: High-speed proportional valve control, integrated turbine air supplies, and comprehensive lung mechanics monitoring modules.
+- Benefits: Real-time lung compliance charts, precise oxygen dosing controls, and smart alarm configurations protecting fragile airways."
+Heavy-duty Suction Machine,Product,Intensive Care Unit,FALSE,TRUE,"A high-vacuum, high-flow medical aspirator built to rapidly clear surgical fields and airways of heavy fluids, blood, and debris.","High-performance surgical suction aspirator designed for continuous, uninterrupted operation.
+- Capabilities: Generates intensive negative pressure loops suitable for operating rooms, emergency departments, and intensive care units.
+- Key Tech: Oil-free diaphragm vacuum pumps, dual overflow protection valves, and shock-resistant high-capacity collection jars.
+- Benefits: Exceptionally quiet running decibels, effortless foot-pedal activation, and rapid fluid displacement to maintain clear operating fields."
+Defibrillator and AED,Product,Intensive Care Unit,FALSE,TRUE,An emergency cardiac life-support system providing advanced biphasic shock delivery alongside automated guidance for sudden cardiac arrest response.,"Dual-mode resuscitation engine designed for critical emergency medical services and hospital codes.
+- Features: Manual defibrillation with synchronized cardioversion, non-invasive pacing, alongside an Automated External Defibrillator (AED) mode.
+- Key Tech: Biphasic truncated exponential energy wave delivery, high-resolution ECG display screens, and clear step-by-step audio coaching.
+- Benefits: Rapid shock charging speeds, robust battery longevity for mobile rescue, and intuitive multi-user operational levels."
+Stress Test Patient/Cardiac Monitor with ETCO2,Product,Intensive Care Unit,FALSE,TRUE,"A comprehensive cardiac diagnostic solution combining physical stress testing parameters with advanced vital monitoring, including end-tidal carbon dioxide metrics.","Specialized cardiopulmonary assessment station optimized for exercise tolerance and critical vital screening.
+- Components: High-torque medical treadmill/ergometer, wireless digital 12-lead ECG acquisition box, and integrated vital signs monitor.
+- Key Tech: Advanced anti-artifact filtering, side-stream or main-stream End-Tidal CO2 (ETCO2) sensors, and real-time ST-segment analysis.
+- Benefits: Detailed tracking of ventilatory parameters under physical load, early detection of ischemia, and high-stability trace readouts."
+Multi-Parameter/Cardiac Patient monitor,Product,Intensive Care Unit,FALSE,TRUE,A highly responsive bedside monitor engineered to continuously track and display vital physiological signals for critically ill or recovering patients.,"Comprehensive clinical vital signs monitor with customizable modular screen layouts.
+- Monitored Metrics: Multi-lead ECG, Respiration rate, SpO2, Non-Invasive Blood Pressure (NIBP), Temperature, and optional Invasive Blood Pressure (IBP).
+- Key Tech: High-visibility color TFT displays, network central station connectivity, and historical trend memory logging.
+- Benefits: Immediate auditory and visual alarm warnings, highly accurate measurement algorithms, and rugged transport-ready form factor."
+Hospital Beds (Electric and Manual),Product,Intensive Care Unit,FALSE,TRUE,"An ergonomic patient care bed series available in motorized or manual crank mechanisms to ensure patient safety, comfort, and easy positioning.","Clinical-grade ward and intensive care unit patient beds built for longevity and infection control.
+- Options: Electric models (handheld pendant control for height, Trendelenburg, and fowler positions) and Manual models (retractable smooth-crank systems).
+- Key Tech: Central locking brake systems, integrated backup battery power systems, and anti-microbial seamless structural surfaces.
+- Benefits: Reduced caregiver strain during repositioning, enhanced fall prevention layouts, and easy cleaning cycles."
+O.R. Light and O.R table,Product,Operating Room Theater,FALSE,TRUE,"A high-performance surgical suite package consisting of shadowless, cool-temperature LED illumination and a multi-axis adjustable surgical operating table.","Premium operating room surgical field illumination and patient positioning system.
+- OR Light: Shadowless multi-lens LED arrays featuring adjustable color temperatures and deep focal illumination columns.
+- OR Table: Electro-hydraulic or mechanical multi-section tabletop offering radio-translucent materials compatible with intraoperative C-Arms.
+- Benefits: Zero-shadow surgical fields, low thermal output minimizing tissue dehydration, and precise multi-angle surgical access."
+Ventilator Adult and Pedia,Product,Operating Room Theater,FALSE,TRUE,"A critical-care life support machine engineered to deliver highly precise, invasive or non-invasive mechanical ventilation across adult and pediatric patients.","Premium intensive care ventilator featuring adaptive respiratory protection modes.
+- Capabilities: Full-spectrum ventilation ranging from neonates/pediatrics to larger adult patients with acute respiratory distress.
+- Key Tech: High-speed proportional valve control, integrated turbine air supplies, and comprehensive lung mechanics monitoring modules.
+- Benefits: Real-time lung compliance charts, precise oxygen dosing controls, and smart alarm configurations protecting fragile airways."
+Anesthesia Machines,Product,Operating Room Theater,FALSE,TRUE,An advanced inhalation sedation system designed to deliver precise mixtures of medical gases and volatile anesthetic agents while sustaining patient ventilation.,"Integrated surgical anesthesia workstation featuring advanced breathing circuits and multi-gas analysis.
+- Capabilities: Safe administration of anesthesia across neonatal, pediatric, and adult cases during complex surgical procedures.
+- Key Tech: High-precision vaporizers, integrated volume/pressure ventilators, and active anesthetic gas scavenging systems (AGSS).
+- Benefits: Low-flow anesthesia capabilities minimizing gas waste, comprehensive real-time agent monitoring, and rapid, safe mechanical response loops."
+Syringe and Infusion Pumps,Product,Operating Room Theater,FALSE,TRUE,Micro-precise fluid and medication administration systems engineered to deliver targeted intravenous therapies at strict micro-volume rates.,"Dual-line drug delivery management solutions for critical care, neonatology, and oncology workflows.
+- Variants: High-precision Syringe Pumps (for micro-dosing) and Volumetric Infusion Pumps (for larger IV fluid volumes).
+- Key Tech: Multi-brand syringe/administration set calibration software, integrated air-in-line ultrasonic sensors, and anti-bolus mechanics.
+- Benefits: Comprehensive built-in drug libraries, strict occlusion pressure alarm systems, and error-free dosage calculations."
+Suction Machine Heavy duty,Product,Operating Room Theater,FALSE,TRUE,"A high-vacuum, high-flow medical aspirator built to rapidly clear surgical fields and airways of heavy fluids, blood, and debris.","High-performance surgical suction aspirator designed for continuous, uninterrupted operation.
+- Capabilities: Generates intensive negative pressure loops suitable for operating rooms, emergency departments, and intensive care units.
+- Key Tech: Oil-free diaphragm vacuum pumps, dual overflow protection valves, and shock-resistant high-capacity collection jars.
+- Benefits: Exceptionally quiet running decibels, effortless foot-pedal activation, and rapid fluid displacement to maintain clear operating fields."
+Cautery/ESU machine,Product,Operating Room Theater,FALSE,TRUE,A high-frequency electrosurgical unit engineered to precisely cut biological tissue and achieve rapid hemostasis during open or endoscopic surgeries.,"Multi-mode surgical generator delivering clean radiofrequency energy cuts and coagulations.
+- Operating Modes: Monopolar (pure cut, blend, forced/spray coag) and Bipolar precision sealing options.
+- Key Tech: Real-time patient return electrode contact quality monitoring, automatic tissue impedance adjustment circuits, and micro-power controls.
+- Benefits: Minimal lateral thermal damage to healthy tissues, optimized sparking prevention, and clean bleeding control across all surgical fields."
+ECG Machine,Product,Operating Room Theater,FALSE,TRUE,"A highly portable, multi-channel diagnostic electrocardiograph designed to instantly capture, analyze, and print out cardiac electrical activity waveforms.","Professional diagnostic ECG recorder with built-in interpretative analysis programs.
+- Features: Simultaneous 12-lead acquisition, high-resolution thermal matrix printing arrays, and internal patient database storage.
+- Key Tech: Digital baseline filtering, pacemaker pulse detection, and automatic Minnesota-code clinical interpretation assistance.
+- Benefits: Lightweight profiles for bedside codes, clear artifact-free rhythm traces, and seamless digital export links (PDF/DICOM)."
+LIS (Laboratory Information Center),Product,Laboratory Department,FALSE,TRUE,"A specialized data management platform that automates clinical laboratory workflows, specimen tracking, instrument data capture, and result verification.","Enterprise software optimizing medical laboratory diagnostics and analytical data integrity.
+â€¢ Core Modules: Specimen barcoding, multi-instrument analyzer interfacing, quality control tracking (Levey-Jennings), and digital validation paths.
+- Key Tech: Bidirectional instrument interfacing protocols, automated critical result alerts, and direct EMR data linking.
+- Benefits: Drastically reduced transcription errors, accelerated turnaround times (TAT), and robust historical patient result matching."
+Automated Chemistry Analyzer,Product,Laboratory Department,FALSE,TRUE,"A high-throughput, automated clinical laboratory system designed to perform rapid quantitative testing on blood serum, plasma, and body fluids.","Full-scale automated photometric and potentiometric laboratory testing platform.
+- Testing Menus: Liver profiles, kidney functions, lipid panels, electrolytes, and general metabolic blood metrics.
+- Key Tech: Continuous sample loading racks, micro-pipetting sampling arms, integrated liquid-level sensors, and onboard reagent cooling.
+- Benefits: Hundreds of tests completed per hour, minimal reagent waste footprints, and robust calibration and control consistency."
+Hematology Analyzer,Product,Laboratory Department,FALSE,TRUE,"A precise, automated blood-testing system engineered to deliver full complete blood count (CBC) profiles and cellular differentials rapidly.","Advanced clinical cellular counter featuring multi-part white blood cell differentiation matrices.
+- Testing Profiles: Total White Blood Cells (WBC), Red Blood Cells (RBC), Platelets, Hemoglobin levels, and absolute 3-part or 5-part differentials.
+- Key Tech: Electrical impedance counting methods, flow cytometry lasers, and automated hydrodynamic focusing alignment.
+- Benefits: Exceptionally small blood sample volume requirements (ideal for pediatrics), flag alerts for abnormal cells, and rapid processing."
+Fluorescence Immunoassay Analyzer,Product,Laboratory Department,FALSE,TRUE,"A compact, high-sensitivity diagnostic analyzer that uses fluorescence-labeled biomarkers to quantify specific proteins, hormones, and infectious agents.","Point-of-care and laboratory-grade immunoassay screening device optimizing critical diagnostic accuracy.
+- Testing Menus: Cardiac markers (Troponin), inflammatory panels (CRP, PCT), hormone levels, and infectious viral antigens.
+- Key Tech: Laser-induced fluorescence optical sensors, simple cassette test profiles, and rapid internal calibration chips.
+- Benefits: Lab-grade precision delivered in minutes, simple cartridge steps, and a compact desktop footprint fitting emergency spaces."
+"Medical/Industrial Grade - Online Double Conversion Un-Interrupted Power Supply (UPS), Single and Three phase",Product,Power Protection/Conditioner,FALSE,TRUE,A heavy-duty power protection system that continuously converts incoming electricity to ensure zero-millisecond power interruptions for sensitive diagnostic equipment.,"Mission-critical power purification and backup infrastructure designed for hospital environments.
+- Configurations: Flexible Single-phase and heavy-duty Industrial Three-phase power distribution matching imaging suites.
+- Key Tech: True Online Double Conversion circuitry (AC-DC-AC isolation), zero-millisecond transfer times, and clean sine-wave output.
+- Benefits: Shields delicate CT/MRI/Cathlab electronics from voltage sags, power surges, and blackouts while extending equipment lifespans."
+"Transient Voltage Surge Suppressor (TVSS), Harmonic filters and etc.",Product,Power Protection/Conditioner,FALSE,TRUE,A premium electrical conditioning suite engineered to suppress voltage spikes and neutralize harmonic distortions across complex institutional power lines.,"Complete clean-power facility protection bundle targeting noise and voltage transients.
+- Components: Heavy-duty Surge Protective Devices (SPDs/TVSS), passive/active Harmonic Filters, and voltage isolation modules.
+- Function: Mitigates high-frequency electrical noise, voltage transients from lightning strikes, and harmonic over-heating loads.
+- Benefits: Prevents unexpected imaging software lockups, protects internal power components, and maintains national power quality compliance."
+"Medical Dry Imaging Films (X-ray, Mammogram, CT scan, MRI and etc)",Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"High-contrast, daylight-safe recording media designed to capture exceptional photographic detail when paired with dry medical printers.","Photographic dry imaging films tailored for high-density spatial resolution requirements.
+- Variants: Specialized blue/clear bases matching diagnostic X-ray, CT, MRI, and high-density, high-contrast Mammogram imaging specs.
+- Key Tech: Anti-static surface coatings, silver-halide or thermal-sensitive micro-layers, and premium archival stability characteristics.
+- Benefits: Zero chemical wet development requirement, consistent optical density outputs (Dmax), and clear diagnostic visibility under standard light box viewing."
+Cassettes with Intensifying Screen,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,A classic analog imaging accessory designed to hold radiographic film tightly while converting X-ray energy into visible light to minimize patient dose.,"Rugged, light-tight structural imaging cassette equipped with highly efficient phosphor screens.
+- Components: Impact-resistant carbon-fiber or aluminum frames lined with rare-earth green or blue-emitting intensifying screens.
+- Function: Multi-layer phosphor crystals absorb incoming X-rays and instantly emit concentrated visible light directly onto analog film emulsions.
+- Benefits: Substantially lowered overall patient radiation dose requirements and extended analog X-ray tube functional life cycles."
+Radio Contrast Media,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"High-density pharmaceutical chemical agents administered to patients to temporarily enhance the contrast visibility of internal organs, vessels, and tissues during scans.","Medical imaging enhancement solutions matching computed tomography, angiography, and MRI modalities.
+- Formulations: Non-ionic iodinated contrast agents (for X-ray/CT/Cathlab) and highly stable Gadolinium-based contrast media (for MRI).
+- Properties: Engineered with low osmolality profiles and optimized viscosities to ensure superior patient tolerability.
+- Benefits: Superb delineation of fine vascular pathologies, tumor enhancement tracking, and clear structural differentiation."
+Air and Hand Sanitizers (100% Plant Extract) with a range of product lines,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"An eco-friendly, non-toxic infection control portfolio that leverages pure plant extracts to safely eliminate airborne and surface pathogens.","Bio-based, chemical-free clinical and sanitizing product ecosystem targeting high-efficiency disinfection.
+- Product Lines: Broad-spectrum hand sanitizing gels, spatial aerosol mists, and surface disinfecting liquids.
+- Formulation: 100% natural plant-derived botanical antimicrobials completely free of harsh alcohols, synthetic dyes, and volatile chemicals.
+- Benefits: Completely non-irritating to skin, safe around sensitive pediatric areas, and provides clean residual antimicrobial protection."
+Injector syringes,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"High-pressure compatible, clear plastic syringes manufactured explicitly to interface with automated power injector systems during contrast procedures.","Sterile, single-use high-capacity medical syringes certified for intensive mechanical fluid pressures.
+- Features: Transparent barrel designs enabling easy bubble detection, high-pressure braided connection tubing, and quick-fill filling straws.
+- Compatibility: Customized mechanical alignments matching industry-standard CT, MRI, and Angiography dual/single power injector models.
+- Benefits: Certified zero-leakage profiles under peak flow velocities, guaranteed sterility paths, and effortless snapping mechanics."
+ECG lead wire and trunk cables,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"Heavy-duty, shielded diagnostic cable assemblies engineered to safely transmit cardiac microvolt electrical signals from patient electrodes to monitors.","High-fidelity medical transmission wiring configured for routine screening and intensive care settings.
+- Components: Multi-pin master trunk cable lines terminating into colored, patient-side snap or grabber lead wires (3, 5, or 12-lead paths).
+- Key Tech: Polyurethane outers jacketings resisting harsh disinfectant wipes, integrated internal copper shielding, and built-in defibrillator pulse protection.
+- Benefits: Exceptionally low trace noise, clean baseline stabilization on monitor screens, and high resistance to repeated bending wear."
+SpO2 probe and cables,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,Reusable or disposable optical pulse oximetry sensors designed to continuously capture oxygen saturation and pulse rate metrics from patient extremities.,"High-precision optoelectronic physiological blood oxygen monitoring attachments.
+- Variants: Soft-silicone adult finger clips, pediatric wrap straps, and lightweight single-use disposable adhesive tape lines.
+- Key Tech: Multi-wavelength LED emitters, sensitive photodiode receptors, and low-perfusion processing compatibility wiring.
+- Benefits: Quick signal acquisition, minimal movement-artifact generation, and comfortable tension designs preventing skin pressure necrosis."
+"NIBP Cuff (Neonatal, Child, Adult and Large Adult)",Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"A complete range of latex-free blood pressure cuffs designed to provide accurate, non-invasive arterial pressure readings across all patient sizes.","Durable, wipeable non-invasive blood pressure sleeves matching various physiological arm circumferences.
+- Sizing Fleet: Micro-sized soft Neonatal bands, Child sleeves, standard Adult sleeves, and elongated Large Adult/Thigh cuff structures.
+- Key Tech: Clear bladder arterial alignment markers, hook-and-loop velcro bindings, and quick-release single/dual hose connectors.
+- Benefits: Balanced pressure compression, high resistance to repeated pneumatic inflating stress, and easy material sterilization."
+Temperature probe,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,A continuous physiological thermal sensor designed to monitor central or peripheral core body temperatures accurately within critical care zones.,"High-sensitivity medical thermistor probes configured for rapid thermal equilibrium response paths.
+- Variants: Soft-tip esophageal/rectal deep core monitoring probes alongside flat-profile skin surface adhesive thermal discs.
+- Key Tech: High-accuracy electrical resistance thermistors encapsulated in bio-compatible protective medical sheathing.
+- Benefits: Interchangeable monitor compatibility plug setups, continuous real-time temperature tracking charts, and strict moisture sealing."
+EEG lead wire,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,"Highly shielded, low-impedance sensor wires built to capture delicate microvolt brainwave fluctuations from the scalp during neurological mapping.","Specialized neuro-diagnostic wiring assemblies optimized for clear electroencephalography acquisitions.
+- Features: Gold-plated or pure silver/silver-chloride (Ag/AgCl) cup electrodes matching universal DIN standard connector ends.
+- Key Tech: Flexible ribbon wire anti-tangle layouts and ultra-low noise internal shielding configurations.
+- Benefits: Exceptional signal conduction through hair and conductive pastes, reduced background line noise interference, and stable baseline tracking."
+IBP Cable,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,An interface link cable engineered to connect invasive arterial pressure transducers directly to multi-parameter bedside patient monitors.,"Shielded interface cables providing direct physiological linkups for real-time invasive pressure readings.
+- Compatibility: Modality connectors matching industry-leading transducer kits (Edwards, Abbott, BD) to standard monitor inputs.
+- Key Tech: Sealed molded plug housings preventing liquid entry, internal noise-canceling copper cores, and secure lock-latch adapters.
+- Benefits: Clean, artifact-free waveform conversion of raw arterial/central venous pressures, rugged design, and quick plug-and-play capability."
+Radiation Lead Shields,Product,"Supplies, Consumables & Accessories",FALSE,TRUE,Professional personal and structural protective radiation gear designed to attenuate scatter X-rays and protect medical teams during fluoroscopic procedures.,"High-grade ionizing radiation defense clothing and mobile barrier partitions.
+- Product Portfolio: Lightweight lead or lead-free composite surgical aprons, thyroid collars, leaded glasses, and mobile transparent lead-glass barriers.
+- Specifications: Standard 0.25mm, 0.35mm, or 0.50mm Lead Equivalence (Pb) multi-layer protection cores.
+- Benefits: Even weight distribution designs minimizing ergonomic back strain, clean fluid-resistant outer fabrics, and reliable shielding certification."
+Installation and re-installation,Service,Medical Equipment Service,FALSE,TRUE,"A comprehensive logistics and precision engineering service covering the safe assembly, mounting, uninstallation, and relocation of complex medical systems.","Turnkey mechanical and electrical deployment solutions for heavy diagnostic assets.
+- Scope: De-installation of older systems, rig-in/crane paths, accurate floor/ceiling structural level alignment, and final interconnect wiring.
+- Equipment Handled: Heavy-duty Cathlabs, CT scanners, ceiling-mounted digital radiography assets, and suspended OR light columns.
+- Benefits: Compliance with factory OEM mounting tolerances, completely safe handling of fragile optical/vacuum parts, and minimized room layout downtime."
+Preventive and Corrective Maintenance Service,Service,Medical Equipment Service,FALSE,TRUE,"A proactive and reactive engineering support framework providing scheduled tune-ups, calibration checks, and emergency repairs to ensure continuous clinical uptime.","Full-lifecycle medical asset bio-medical and radiological maintenance management.
+- Preventive Scope: Scheduled lubrication, electrical safety testing, vacuum optimization, power supply ripple adjustments, and wear-and-tear part replacements.
+- Corrective Scope: Emergency troubleshooting, component-level repairs, fast spare parts sourcing, and immediate clinical safety recertification.
+- Benefits: Maximized diagnostic equipment lifespans, drastically reduced unexpected system failures, and verifiable compliance with hospital accreditation audits."
+Calibration Verification certification,Service,Medical Equipment Service,FALSE,TRUE,An official testing and certification service that mathematically cross-checks clinical device outputs against national and international metrology guidelines.,"Formal instrumentation metrology auditing and regulatory compliance validation.
+- Testing Framework: Quantitative evaluation of X-ray dosages, laser printer optical density layers, analyzer pipetting volumes, and defib energy outputs.
+- Deliverables: Detailed performance data logs, traceable master-meter tracking certificates, and physical compliance room decals.
+- Benefits: Guaranteed patient diagnostic dose accuracy, legal protection through documented certification, and seamless adherence to local health ministries."
+Project management and consultation,Service,Medical Equipment Service,FALSE,TRUE,A strategic advisory and technical oversight service guiding clinics from initial department workflow blueprints to final equipment commissioning.,"End-to-end medical facility architecture and clinical workflow optimization consulting.
+- Service Scope: Equipment site planning, utility capacity assessment (HVAC/Power), regulatory licensing pathways, and installation timeline oversight.
+- Expertise: Medical architecture coordination, cross-vendor compatibility analysis, and capital expense deployment budgeting.
+- Benefits: Zero expensive construction errors, streamlined multi-vendor coordination, and clinically efficient floorplans that optimize patient throughput."
+Installation of Radiation Shielding,Service,Medical Equipment Service,FALSE,TRUE,"A critical structural specialized construction service providing precise lead-lining of room partitions, doors, and control booths to safely enclose ionizing radiation.","Specialized structural radiation safety wall, ceiling, and aperture shielding construction.
+- Execution: Installation of sheet lead to walls, heavy lead-lined solid wood/metal doors, and lead-glass control viewing installations.
+- Materials Utilized: Pure elemental lead sheeting, barium-sulfate radiation plaster, and certified heavy lead-equivalent window panes.
+- Benefits: Guaranteed zero radiation leakage to external corridors, total compliance with atomic energy boards, and a protected work environment."
+Installation and re-installation,Service,Un-Interrupted Power Supply Service,FALSE,TRUE,"A comprehensive logistics and precision engineering service covering the safe assembly, mounting, uninstallation, and relocation of complex medical systems.","Turnkey mechanical and electrical deployment solutions for heavy diagnostic assets.
+- Scope: De-installation of older systems, rig-in/crane paths, accurate floor/ceiling structural level alignment, and final interconnect wiring.
+- Equipment Handled: Heavy-duty Cathlabs, CT scanners, ceiling-mounted digital radiography assets, and suspended OR light columns.
+- Benefits: Compliance with factory OEM mounting tolerances, completely safe handling of fragile optical/vacuum parts, and minimized room layout downtime."
+Preventive and Corrective Maintenance,Service,Un-Interrupted Power Supply Service,FALSE,TRUE,"A proactive and reactive engineering support framework providing scheduled tune-ups, calibration checks, and emergency repairs to ensure continuous clinical uptime.","Full-lifecycle medical asset bio-medical and radiological maintenance management.
+- Preventive Scope: Scheduled lubrication, electrical safety testing, vacuum optimization, power supply ripple adjustments, and wear-and-tear part replacements.
+- Corrective Scope: Emergency troubleshooting, component-level repairs, fast spare parts sourcing, and immediate clinical safety recertification.
+- Benefits: Maximized diagnostic equipment lifespans, drastically reduced unexpected system failures, and verifiable compliance with hospital accreditation audits."
+Project management and consultation,Service,Un-Interrupted Power Supply Service,FALSE,TRUE,A strategic advisory and technical oversight service guiding clinics from initial department workflow blueprints to final equipment commissioning.,"End-to-end medical facility architecture and clinical workflow optimization consulting.
+- Service Scope: Equipment site planning, utility capacity assessment (HVAC/Power), regulatory licensing pathways, and installation timeline oversight.
+- Expertise: Medical architecture coordination, cross-vendor compatibility analysis, and capital expense deployment budgeting.
+- Benefits: Zero expensive construction errors, streamlined multi-vendor coordination, and clinically efficient floorplans that optimize patient throughput."
+Electrical Installations,Service,Electrical Services,FALSE,TRUE,"A specialized clinical-grade electrical contracting service delivering dedicated power distribution networks, isolated grounding, and safe equipment terminations.","High-integrity hospital sub-distribution and heavy medical device electrical wiring.
+- Scope: Installation of dedicated power panels, clinical-grade isolated ground loops, overhead cable trays, and terminal connection boxes.
+- Standards: Compliance with institutional medical area grounding requirements and specialized imaging equipment high-current draws.
+- Benefits: Total mitigation of localized macro-shock hazards, eliminated ground-loop diagnostic signal artifacts, and highly safe current paths."
+Power Quality Audit,Service,Electrical Services,FALSE,TRUE,A specialized analytical electrical engineering service that deploys advanced forensic recorders to intercept structural power line deficiencies.,"Forensic electrical network logging and power disturbance analysis within diagnostic facilities.
+- Diagnostics Captured: Voltage sags, momentary swells, high-frequency line harmonics, transient spikes, and structural phase unbalances.
+- Deliverables: Long-term recorded data trend graphs alongside customized, actionable engineered remediation reports (UPS/TVSS suggestions).
+- Benefits: Clear identification of invisible power lines causing software crashes, minimized electronics degradation, and improved energy efficiency."
