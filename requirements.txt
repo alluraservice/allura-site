@@ -53,3 +53,4 @@ zipp==3.23.1
 gunicorn
 Flask
 pandas
+psycopg2-binary
