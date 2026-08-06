@@ -1,22 +1,45 @@
+import os
 import pandas as pd
 import psycopg2
 from sqlalchemy import create_engine
 
-# Verified PostgreSQL Credentials
-DB_CONFIG = {
-    "dbname": "allura_db",
-    "user": "postgres",
-    "password": "admin",
-    "host": "localhost",
-    "port": 5432,
-}
+# ------------------------------------------------------------------
+# DATABASE CONNECTION
+# Priority order:
+#   1. DATABASE_URL env var - what Render sets automatically when you attach
+#      a Render Postgres instance to this service. Format:
+#      postgresql://user:password@host:port/dbname
+#   2. Individual DB_HOST / DB_PORT / DB_NAME / DB_USER / DB_PASSWORD env vars
+#      - for any other hosting setup (a different Postgres provider, etc.)
+#   3. The original hardcoded localhost values - unchanged, so local
+#      development (running on your Mac against your local Postgres) still
+#      works exactly as before with no env vars set at all.
+# ------------------------------------------------------------------
+
+_env_database_url = os.environ.get("DATABASE_URL")
+
+if _env_database_url:
+    # Render (and some other hosts) hand this out as "postgres://...";
+    # SQLAlchemy 1.4+/2.x requires the "postgresql://" scheme instead.
+    DATABASE_URL = _env_database_url.replace("postgres://", "postgresql://", 1)
+    DB_CONFIG = None  # not used in this branch - psycopg2.connect() takes the URL directly below
+else:
+    DB_CONFIG = {
+        "dbname": os.environ.get("DB_NAME", "allura_db"),
+        "user": os.environ.get("DB_USER", "postgres"),
+        "password": os.environ.get("DB_PASSWORD", "admin"),
+        "host": os.environ.get("DB_HOST", "localhost"),
+        "port": os.environ.get("DB_PORT", "5432"),
+    }
+    DATABASE_URL = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
 
 # SQLAlchemy engine for Pandas integration
-DATABASE_URL = f"postgresql://{DB_CONFIG['user']}:{DB_CONFIG['password']}@{DB_CONFIG['host']}:{DB_CONFIG['port']}/{DB_CONFIG['dbname']}"
 engine = create_engine(DATABASE_URL)
 
 
 def get_db_connection():
+    if _env_database_url:
+        return psycopg2.connect(DATABASE_URL)
     return psycopg2.connect(
         dbname=DB_CONFIG["dbname"],
         user=DB_CONFIG["user"],
