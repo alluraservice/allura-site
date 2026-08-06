@@ -50,3 +50,6 @@ urllib3==2.6.3
 wcwidth==0.7.0
 Werkzeug==3.1.8
 zipp==3.23.1
+gunicorn
+Flask
+pandas
