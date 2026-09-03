@@ -1,0 +1,36 @@
+
+@import url('https://fonts.cdnfonts.com/css/glacial-indifference');
+
+:root {
+    --glacial: 'Glacial Indifference', sans-serif;
+    --green: #006400;
+    --dark-green: #084008;
+    --white: #ffffff;
+    --off-white: #f2f2f2;
+    --light-green: #eef3e4;
+    --placeholder: #99a899;
+    
+    --title-size: 2.2rem;
+    --title-weight: 700;
+    
+    --body-size: 1rem;
+    --shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    --border-radius: 16px;
+}
+
+body {
+    font-family: var(--glacial);
+    background-color: var(--white);
+    color: var(--dark-green);
+    font-size: var(--body-size);
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--glacial);
+    color: var(--dark-green);
+    font-weight: var(--title-weight);
+}
+
+

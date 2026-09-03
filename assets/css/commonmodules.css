@@ -1,0 +1,144 @@
+/* --- Top Green Bar Styling --- */
+.top-green-bar {
+    background-color: var(--green);
+    color: var(--white);
+    font-size: 0.85rem;
+}
+
+.top-bar-item {
+    display: flex;
+    align-items: center;
+    margin-left: 2rem;
+    color: var(--white);
+}
+
+.top-bar-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 6px;
+    filter: brightness(0) invert(1); /* Turns dark SVGs white */
+}
+
+/* --- Main Navigation Bar Styling --- */
+.main-nav-bar {
+    background-color: var(--white);
+    border-bottom: 1px solid #eaeaea;
+}
+
+.navbar-brand-logo {
+    display: flex;
+    align-items: center;
+}
+
+/* --- Search Bar Styling --- */
+.navbar-search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-icon-input {
+    position: absolute;
+    left: 14px;
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.navbar-search-box {
+    border: 1px solid #dcdcdc;
+    border-radius: var(--border-radius); /* Leverages your brand.css variable! */
+    padding: 6px 16px 6px 40px;
+    font-size: 0.9rem;
+    outline: none;
+    width: 220px;
+    transition: all 0.3s ease;
+    background-color: var(--off-white); /* Leverages your brand.css variable! */
+}
+
+.navbar-search-box:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 0 3px rgba(0, 100, 0, 0.1);
+    width: 260px;
+    background-color: var(--white);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+/* Adjust the max-width value (e.g., 1200px) depending on when your links start wrapping */
+@media (max-width: 1300px) {
+    .nav-container { /* Replace with the actual class name wrapping your nav links (Home, About Us, etc.) */
+        display: none !important;
+    }
+}
+
+/* ==========================================
+   FOOTER STYLES
+   ========================================== */
+
+.site-footer {
+    background-color: transparent;
+    border-top: 1px solid rgba(8, 64, 8, 0.1);
+    padding-top: 60px;
+    padding-bottom: 30px;
+    margin-top: 80px;
+}
+
+.footer-logo {
+    max-width: 180px;
+    height: auto;
+}
+
+.footer-links-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.footer-links-list li {
+    margin-bottom: 10px;
+}
+
+.footer-links-list a {
+    color: var(--dark-green);
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.footer-links-list a:hover {
+    opacity: 0.75;
+    text-decoration: underline;
+}
+
+.footer-contact-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.footer-contact-item i {
+    margin-right: 12px;
+    margin-top: 3px;
+    color: var(--dark-green);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(8, 64, 8, 0.08);
+    padding-top: 25px;
+    margin-top: 40px;
+}
+
+/* Sets SVG img color to #084008 */
+.footer-contact-item img,
+.footer-icon {
+    filter: brightness(0) invert(18%) sepia(34%) saturate(2256%) hue-rotate(82deg) brightness(96%) contrast(97%);
+}
+
+/* If using icon fonts or inline SVGs */
+.footer-contact-item i,
+.footer-contact-item svg {
+    color: var(--dark-green) !important;
+    fill: var(--dark-green) !important;
+}

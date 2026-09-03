@@ -1,0 +1,142 @@
+/* ==========================================
+   ABOUT US PAGE STYLES
+   ========================================== */
+
+/* Hero Banner with Dark Green Gradient & Blurred Image */
+.about-hero-card {
+    position: relative;
+    border-radius: var(--border-radius, 16px);
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    padding: 60px 20px;
+    margin: 20px auto;
+    max-width: 1000px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Background image & blur layer */
+.about-hero-card::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background-image: linear-gradient(to top, rgba(0, 64, 0, 0.95) 0%, rgba(0, 64, 0, 0.65) 100%),
+                      url('/assets/pictures/home/cover_photo.jpg');
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px); /* Adjust pixel strength here to increase/decrease blur */
+    z-index: 1;
+}
+
+/* Ensure child content stays sharp above the blurred background */
+.about-hero-card .container {
+    position: relative;
+    z-index: 2;
+    max-width: 750px;
+}
+
+/* Scaled-down typography */
+.about-hero-card h1 {
+    color: var(--white, #ffffff) !important;
+    font-weight: var(--title-weight);
+    font-size: clamp(1.75rem, 3vw, 2.25rem) !important;
+    margin-bottom: 0.75rem !important;
+}
+
+.about-hero-card p {
+    color: var(--white, #ffffff) !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5;
+}
+
+.about-hero-card .hero-subtitle {
+    color: var(--white, #ffffff) !important;
+    letter-spacing: 1.2px;
+    font-size: 0.8rem !important;
+    opacity: 0.9;
+}
+
+/* Stat Counters - Enhanced Box Shadow */
+.stat-box {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px 20px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--dark-green, #0a3a2a);
+}
+
+/* Story Timeline - Enhanced Content Card Shadows */
+.timeline {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: var(--dark-green, #0a3a2a);
+    transform: translateX(-50%);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.timeline-content {
+    background: var(--white, #ffffff);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.09);
+    border-left: 4px solid var(--dark-green, #0a3a2a);
+}
+
+/* Strategic Capabilities Card Shadow */
+.section-card-content {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.10) !important;
+}
+
+/* Leadership Cards - Enhanced Shadows */
+.leader-card {
+    background: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease;
+}
+
+.leader-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+}
+
+/* Timeline Responsiveness */
+@media (max-width: 768px) {
+    .timeline::before {
+        left: 20px;
+    }
+    .timeline-item {
+        margin-left: 30px;
+    }
+}

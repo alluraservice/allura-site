@@ -1,0 +1,96 @@
+.section-card {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    box-shadow: var(--shadow);
+    padding: 50px;
+    margin: 20px auto;
+    max-width: 1000px;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.section-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 60%, transparent 100%);
+    z-index: 1;
+}
+
+.section-card-content {
+    position: relative;
+    z-index: 2;
+    color: var(--white);
+    max-width: 480px; 
+}
+
+.section-card-content h2, 
+.section-card-content h3 {
+    color: var(--white);
+}
+
+/* Split Card for Social Media Section */
+.section-card-social-media {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin: 40px auto;
+    max-width: 1000px;
+    background-color: var(--dark-green);
+}
+
+/* Gradient Card for AlluBot Section */
+.section-card-allubot {
+    position: relative;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    margin: 40px auto;
+    max-width: 1000px;
+    background: radial-gradient(circle at 85% 50%, rgba(0, 120, 60, 0.6) 0%, var(--dark-green) 70%);
+    background-color: var(--dark-green);
+    padding: 20px 0;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.container.py-5 {
+    max-width: 800px; /* Adjust this px value to your liking */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.section-no-border-1 {
+    max-width: 1000px;
+    margin: 0px auto;
+    padding-top: 60px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+
+.section-no-border-2 {
+    max-width: 1000px;
+    margin: 0px auto;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    text-align: center;
+}
+
+.section-card-content h2, 
+.section-card-content h3,
+.section-card-allubot h2,
+.section-card-allubot h3 {
+    color: var(--white);
+    margin-bottom: 12px; /* Adjust spacing here (e.g., 10px - 16px) */
+}

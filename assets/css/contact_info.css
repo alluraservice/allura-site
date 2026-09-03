@@ -1,0 +1,101 @@
+/* Contact Info Section CSS Centered */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+.contact-info .section-heading {
+    width: 100%;
+    max-width: 420px;
+    text-align: left;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.contact-info-card {
+    background-color: var(--green, #008000);
+    color: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    box-shadow: var(--shadow);
+}
+
+.contact-info-card img, 
+.contact-info-card svg {
+    width: 36px;
+    height: 36px;
+    fill: #ffffff;
+    flex-shrink: 0;
+    filter: brightness(0) invert(1);
+}
+
+.contact-info-card h3 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+}
+
+.contact-info-card p {
+    color: #ffffff;
+    font-size: 0.95rem;
+    margin: 0;
+    opacity: 0.95;
+    line-height: 1.4;
+}
+
+.contact-info .fw-bold.mb-3.mt-4 {
+    width: 100%;
+    max-width: 420px;
+    text-align: left !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.social-links-container {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    width: 100%;
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: flex-start;
+}
+
+.social-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--green, #008000);
+    border-radius: 50%;
+    background-color: var(--green, #008000);
+    transition: all 0.3s ease;
+}
+
+.social-icon img.social-svg {
+    width: 22px;
+    height: 22px;
+    filter: brightness(0) invert(1);
+}
+
+.social-icon:hover {
+    opacity: 0.9;
+    background-color: var(--green, #008000);
+}

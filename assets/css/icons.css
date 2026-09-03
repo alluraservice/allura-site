@@ -1,0 +1,13 @@
+.meet-allubot-img {
+    position: absolute;
+    bottom: 0;
+    right: 40px; /* Adjust right distance as needed */
+    padding: 0 !important;
+}
+
+.meet-allubot-img img {
+    width: 300px; /* Adjust this value up or down depending on how large you want it */
+    height: auto;
+    object-fit: contain;
+    
+}

@@ -1,0 +1,81 @@
+.modality-carousel-container {
+    display: flex;
+    gap: 20px; /* <--- This instantly adds even spacing between all cards! */
+    overflow-x: auto;
+}
+
+.modality-card {
+    position: relative;
+    width: 240px !important;
+    height: 240px !important;
+    flex-shrink: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 24px;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Green Tint Overlay using a gradient */
+.modality-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(40, 120, 70, 0.4) 0%, rgba(20, 80, 45, 0.8) 100%);
+    z-index: 1;
+}
+
+/* Ensure text and links sit above the green overlay */
+.modality-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.modality-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.modality-title {
+    color: var(--white) !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.modality-link {
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 0.9rem;
+    text-transform: lowercase;
+    text-decoration: none;
+}
+
+/* Base styling for both carousel buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 45px;
+    height: 90px;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, opacity 0.3s ease;
+}
+
+.carousel-btn:hover {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
