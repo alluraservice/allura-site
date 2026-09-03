@@ -1,14 +1,23 @@
+import os
 import psycopg2
 import pandas as pd
 
 def getdblocation():
-    db = psycopg2.connect(
-        host='localhost', 
-        database='allura_db', 
-        user='postgres', 
-        port=5432, 
-        password='admin', 
-    )
+    # Render sets DATABASE_URL in Environment Variables
+    db_url = os.environ.get('DATABASE_URL')
+    
+    if db_url:
+        # Production (Render)
+        db = psycopg2.connect(db_url, sslmode='require')
+    else:
+        # Local Development Fallback
+        db = psycopg2.connect(
+            host='localhost', 
+            database='allura_db', 
+            user='postgres', 
+            port=5432, 
+            password='admin'
+        )
     return db
 
 def modifyDB(sql, values):
