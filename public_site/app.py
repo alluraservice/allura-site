@@ -11,12 +11,12 @@ app = dash.Dash(
     assets_folder='../assets'
 )
 
+# Expose underlying Flask server for Gunicorn
+server = app.server
+
 app.config.suppress_callback_exceptions = True
-
 app.css.config.serve_locally = True
-
 app.scripts.config.serve_locally = True
-
 app.title = "Allura Enterprise"
 
 log = logging.getLogger("werkzeug")

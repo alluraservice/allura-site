@@ -1,17 +1,18 @@
+import sys
+import os
 import webbrowser
+
+# Fix sys.path before importing local modules
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import dash
 import dash_bootstrap_components as dbc
 from dash import dcc, html
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-import sys
-import os
 
-# Importing your app variable from app.py so we can use it
-from app import app
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Explicitly import BOTH app and server from app.py
+from app import app, server
 
 # Importing commonmodules and pages
 import commonmodules as cm
@@ -30,7 +31,6 @@ app.layout = html.Div(
         dcc.Location(id='url', refresh=False),
         *cm.navbar,
         html.Div(
-            dash.page_container, 
             id='page_content', 
             className='m-2 p-2'
         ),
@@ -61,11 +61,9 @@ def displaypage(pathname):
         elif pathname == '/products':
             returnlayout = products.layout() if callable(getattr(products, 'layout', None)) else products.layout
         
-        # EXACT MATCHES MUST COME BEFORE startswith WILDCARDS
         elif pathname in ['/product-details', '/products/details', '/products/detail']:
             returnlayout = product_details.layout() if callable(getattr(product_details, 'layout', None)) else product_details.layout
         
-        # Wildcard match for dynamic modality/type IDs (e.g., /products/1)
         elif pathname.startswith('/products/'):
             parts = pathname.strip('/').split('/')
             type_id = parts[1] if len(parts) > 1 else None
