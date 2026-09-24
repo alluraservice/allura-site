@@ -37,13 +37,6 @@ html.Div([
 
             html.Div([
                 html.Div([
-                    html.Div("₱128.9M+", className="stat-number"),
-                    html.Div("Largest Single Project (MRI 1.5T)", className="fw-semibold text-muted text-uppercase fs-7 mt-1")
-                ], className="stat-box text-center shadow-sm h-100")
-            ], className="col-md-3 col-6 mb-4"),
-
-            html.Div([
-                html.Div([
                     html.Div("Platinum", className="stat-number"),
                     html.Div("PhilGEPS & FDA LTO Certified", className="fw-semibold text-muted text-uppercase fs-7 mt-1")
                 ], className="stat-box text-center shadow-sm h-100")
@@ -55,7 +48,7 @@ html.Div([
                     html.Div("Luzon & Visayas Footprint", className="fw-semibold text-muted text-uppercase fs-7 mt-1")
                 ], className="stat-box text-center shadow-sm h-100")
             ], className="col-md-3 col-6 mb-4"),
-        ], className="row")
+        ], className="row justify-content-center")
     ], className="container mb-5"),
 
     # 3. WHO WE ARE & CAPABILITIES
@@ -97,7 +90,7 @@ html.Div([
                     ])
                 ], className="section-card-content p-4 p-md-5 rounded-4 shadow-sm border-0 bg-light")
             ], className="col-lg-6")
-        ], className="row align-items-center")
+        ], className="row align-items-center justify-content-center")
     ], className="container mb-5 py-4"),
 
     # 4. THE ALLURA SUCCESS STORY (TIMELINE)
@@ -152,7 +145,7 @@ html.Div([
                         html.Span("2024 – 2026+", className="badge mb-2 px-3 py-2 fs-7 rounded-pill text-white", style={'backgroundColor': 'var(--green)'}),
                         html.H4("Phase 4: National Scale & Expansion", className="fw-bold text-dark mb-2"),
                         html.P(
-                            "Executed major advanced systems deliveries (including ₱128.9M MRI 1.5T project). "
+                            "Achieved a sales revenue growth of more than 800%. "
                             "Transitioned into a national medical channel partner establishing a Metro Manila National HQ.",
                             className="text-muted fs-6 mb-0"
                         )
