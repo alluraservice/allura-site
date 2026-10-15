@@ -639,6 +639,13 @@ def authenticate(email, password):
                 VALUES (%s, %s, 'System Administrator', 'Active', %s, FALSE);""",
              [legacy.get('first_name') or email.split('@')[0], legacy['email'], legacy['password_hash']],
              fetch='none', commit=True)
+    # If nobody can manage accounts yet (e.g. a database that predates the Accounts page),
+    # the first admin who signs in becomes the one who can.
+    _run("""UPDATE accounts SET can_manage_accounts = TRUE, can_grant_access = TRUE, role = COALESCE(role, 'System Administrator')
+            WHERE LOWER(email) = LOWER(%s)
+              AND NOT EXISTS (SELECT 1 FROM accounts WHERE COALESCE(can_grant_access, FALSE)
+                                                       AND COALESCE(status, 'Active') = 'Active');""",
+         [email], fetch='none', commit=True)
     acc = get_account_by_email(email)
     if acc:
         record_login(acc['id'])

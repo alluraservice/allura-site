@@ -9,6 +9,67 @@ and the error is printed.
 from database.dbconnect import getdblocation
 
 ADMIN_SCHEMA_STEPS = [
+    # ---------- Base tables: created only if missing (an older live database may not have them) ----------
+    """
+    CREATE TABLE IF NOT EXISTS accounts (
+        id          SERIAL PRIMARY KEY,
+        name        VARCHAR(255),
+        email       VARCHAR(255) UNIQUE,
+        role        VARCHAR(100),
+        status      VARCHAR(50) DEFAULT 'Active',
+        created_at  TIMESTAMP DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS inquiries (
+        id               SERIAL PRIMARY KEY,
+        customer_name    VARCHAR(255),
+        address          TEXT,
+        contact_person   VARCHAR(255),
+        department       VARCHAR(255),
+        phone            VARCHAR(50),
+        email            VARCHAR(255),
+        machine_inquiry  TEXT,
+        remarks          TEXT,
+        status           VARCHAR(50) DEFAULT 'New',
+        created_at       TIMESTAMP DEFAULT NOW()
+    );
+    CREATE TABLE IF NOT EXISTS admin_users (
+        id             SERIAL PRIMARY KEY,
+        email          VARCHAR(255) UNIQUE,
+        password_hash  VARCHAR(255),
+        first_name     VARCHAR(100),
+        last_name      VARCHAR(100),
+        role           VARCHAR(50),
+        is_active      BOOLEAN DEFAULT TRUE,
+        created_at     TIMESTAMP DEFAULT NOW(),
+        last_login     TIMESTAMP
+    );
+    ALTER TABLE modalities ADD COLUMN IF NOT EXISTS description TEXT;
+    ALTER TABLE modalities ADD COLUMN IF NOT EXISTS image_url   TEXT;
+    ALTER TABLE items      ADD COLUMN IF NOT EXISTS image_url   TEXT;
+    ALTER TABLE items      ADD COLUMN IF NOT EXISTS description TEXT;
+    ALTER TABLE items      ADD COLUMN IF NOT EXISTS is_active   BOOLEAN DEFAULT TRUE;
+    ALTER TABLE items      ADD COLUMN IF NOT EXISTS is_featured BOOLEAN DEFAULT FALSE;
+    """,
+
+    # ---------- Repair id counters ----------
+    # If rows were ever imported with their ids, a table's id counter can lag behind, and the next
+    # insert fails with "duplicate key". This moves each counter past the highest existing id.
+    """
+    DO $$
+    DECLARE t TEXT; seq TEXT;
+    BEGIN
+        FOREACH t IN ARRAY ARRAY['types','categories','modalities','items','inquiries','accounts','admin_users']
+        LOOP
+            IF to_regclass(t) IS NOT NULL THEN
+                seq := pg_get_serial_sequence(t, 'id');
+                IF seq IS NOT NULL THEN
+                    EXECUTE format('SELECT setval(%L, COALESCE((SELECT MAX(id) FROM %I), 0) + 1, false)', seq, t);
+                END IF;
+            END IF;
+        END LOOP;
+    END
+    $$;
+    """,
     # ---------- Inquiries: inbox organisation fields ----------
     """
     ALTER TABLE inquiries ADD COLUMN IF NOT EXISTS source             VARCHAR(40)  DEFAULT 'Contact Us';
@@ -136,8 +197,10 @@ ADMIN_SCHEMA_STEPS = [
 # To add a new one later: append ("a_new_unique_name", """ SQL """) to this list.
 # ---------------------------------------------------------------------
 ONE_TIME_UPDATES = [
-    ("2026_10_15_unfeature_items_and_add_supplies_clinic_products", """
+    ("2026_10_15_unfeature_all_items", """
 UPDATE items SET is_featured = FALSE WHERE COALESCE(is_featured, FALSE);
+"""),
+    ("2026_10_15_add_supplies_and_clinic_products", """
 
 DO $$
 DECLARE
