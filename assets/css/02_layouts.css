@@ -1,0 +1,104 @@
+/* =====================================================================
+   20 - LAYOUT - top bar, navbars, page heroes, section headings, footer
+   (Replaces commonmodules.css + hero_cards.css + the two page-header blocks
+   that used to be duplicated in admin.css and site.css)
+   ===================================================================== */
+
+/* ---------- Top green bar (public site) ---------- */
+.top-green-bar { background-color: var(--green); color: var(--white); font-size: .85rem; }
+.top-bar-item { display: flex; align-items: center; margin-left: 2rem; color: var(--white); }
+.top-bar-icon { width: 14px; height: 14px; margin-right: 6px; filter: brightness(0) invert(1); }
+
+/* ---------- Main navbar (public + admin share it) ---------- */
+.main-nav-bar { background-color: var(--white); border-bottom: 1px solid #eaeaea; }
+.nav-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.nav-actions .btn-green { padding: 9px 22px; box-shadow: 0 4px 12px rgba(0,100,0,.18); }
+/* The sticky header's wrapper (#navbar-container in index.py) must not end right after the header,
+   or position: sticky has nowhere to stick. display: contents lets it stick for the whole page. */
+#navbar-container { display: contents; }
+
+/* Navigation links: full size on wide screens, tighter from 1200px down, and a Menu button below 768px */
+.nav-container { gap: clamp(2px, 1vw, 16px) !important; flex-wrap: nowrap; }
+.nav-container .btn-nav { white-space: nowrap; }
+.nav-menu .dropdown-toggle {
+    display: inline-flex; align-items: center; gap: 6px; border-radius: 999px !important;
+    border: 1.5px solid var(--a-line) !important; padding: 7px 14px !important; font-weight: 700 !important;
+}
+.nav-menu .dropdown-toggle::after { display: none; }
+.nav-menu .dropdown-menu { border: 1px solid var(--a-line); border-radius: 12px; box-shadow: var(--a-shadow); padding: 6px; min-width: 200px; }
+.nav-menu .dropdown-item { border-radius: 8px; color: var(--dark-green); padding: 9px 12px; }
+.nav-menu .dropdown-item:hover, .nav-menu .dropdown-item:focus { background: var(--a-hover); color: var(--green); }
+@media (max-width: 1199px) {
+    .nav-container .btn-nav { padding: 6px 7px !important; font-size: .9rem; }
+    .main-nav-bar .navbar-brand img { height: 38px; }
+    .nav-actions .btn-green { padding: 8px 16px; }
+}
+@media (max-width: 900px) {
+    .nav-container .btn-nav { padding: 6px 4px !important; font-size: .84rem; }
+}
+
+/* ---------- Page hero ----------
+   Every inner page (public + admin) uses .page-hero from site_ui / admin_ui.page_header,
+   so the padding around the text is identical everywhere.
+   The home page keeps its own full-height .hero-section (30_cards.css). */
+.page-hero {
+    position: relative;
+    margin-top: -20px;
+    padding: var(--hero-pad-y) 0;
+    color: #fff;
+    background:
+        linear-gradient(100deg, rgba(8, 64, 8, .96) 0%, rgba(0, 100, 0, .88) 55%, rgba(0, 100, 0, .62) 100%),
+        url('/assets/pictures/home/cover_photo.jpg') center 35% / cover;
+}
+.page-hero-inner { max-width: 1680px; margin: 0 auto; padding: 0 var(--hero-pad-x); }
+.page-hero.is-site .page-hero-inner { max-width: 1240px; }
+.page-hero .crumbs { font-size: .74rem; letter-spacing: .12em; text-transform: uppercase; opacity: .75; margin-bottom: 8px; }
+.page-hero .crumbs a { color: #fff; text-decoration: none; }
+.page-hero .crumbs a:hover { text-decoration: underline; }
+.page-hero h1 { color: #fff; font-size: 1.75rem; letter-spacing: .04em; margin: 0; line-height: 1.2; }
+.page-hero p { margin: 8px 0 0; opacity: .85; font-size: .93rem; max-width: 680px; }
+.page-hero .header-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+
+/* Dashboard: neutral grey version */
+.page-hero.hero-grey {
+    background:
+        linear-gradient(100deg, rgba(60,60,60,.92) 0%, rgba(80,80,80,.82) 55%, rgba(80,80,80,.55) 100%),
+        url('/assets/pictures/home/cover_photo.jpg') center 35% / cover;
+}
+/* About Us: larger, centred banner */
+.page-hero.hero-feature { padding: 72px 0 68px; text-align: center; }
+.page-hero.hero-feature .page-hero-inner > div { justify-content: center !important; }
+.page-hero.hero-feature h1 { font-size: clamp(1.8rem, 3vw, 2.3rem); }
+.page-hero.hero-feature p { margin-left: auto; margin-right: auto; max-width: 760px; font-size: 1rem; }
+
+@media (max-width: 900px) {
+    :root { --hero-pad-y: 34px; }
+    .page-hero h1 { font-size: 1.5rem; }
+    .page-hero.hero-feature { padding: 52px 0 48px; }
+}
+
+/* ---------- Section headings (public) ---------- */
+.site-eyebrow { font-size: .74rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--green); margin: 0 0 6px; }
+.site-h2 { font-size: 1.6rem; margin: 0 0 8px; line-height: 1.25; }
+.site-lead { color: var(--a-muted); font-size: 1rem; line-height: 1.65; margin: 0; max-width: 720px; }
+.site-section { margin-top: 44px; }
+.site-section-head { margin-bottom: 18px; }
+.site-section-head.center { text-align: center; }
+.site-section-head.center .site-lead { margin: 0 auto; }
+
+/* ---------- Footer ---------- */
+.site-footer { background-color: #fff; border-top: 1px solid rgba(8, 64, 8, .1); padding: 60px 0 30px; }   /* white: the logo isn't transparent */
+.footer-logo { max-width: 180px; height: auto; }
+.footer-links-list { list-style: none; padding-left: 0; margin-bottom: 0; }
+.footer-links-list li { margin-bottom: 10px; }
+.footer-links-list a { color: var(--dark-green); text-decoration: none; transition: opacity .2s ease; }
+.footer-links-list a:hover { opacity: .75; text-decoration: underline; }
+.footer-contact-item { display: flex; align-items: flex-start; margin-bottom: 12px; }
+.footer-contact-item img, .footer-icon {
+    filter: brightness(0) invert(18%) sepia(34%) saturate(2256%) hue-rotate(82deg) brightness(96%) contrast(97%);
+}
+.footer-bottom { border-top: 1px solid rgba(8, 64, 8, .08); padding-top: 25px; margin-top: 40px; }
+
+@media (max-width: 767px) {
+    .top-bar-item { margin-left: 1rem; font-size: .76rem; }
+}

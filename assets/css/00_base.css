@@ -1,0 +1,86 @@
+/* =====================================================================
+   00 Â· BASE â€” design tokens, typography, page shells
+   Dash loads every .css in /assets alphabetically, so the number prefix
+   sets the cascade order: base â†’ components â†’ layout â†’ cards â†’ pages.
+   (Replaces brand.css + the :root block that used to live in admin.css)
+   ===================================================================== */
+@import url('https://fonts.cdnfonts.com/css/glacial-indifference');
+
+:root {
+    /* Brand */
+    --glacial: 'Glacial Indifference', sans-serif;
+    --green: #006400;
+    --dark-green: #084008;
+    --white: #ffffff;
+    --off-white: #f2f2f2;
+    --light-green: #eef3e4;
+    --placeholder: #99a899;
+    --title-size: 2.2rem;
+    --title-weight: 700;
+    --body-size: 1rem;
+    --shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+    --border-radius: 16px;
+
+    /* Surfaces & ink (shared by the public site and the admin) */
+    --a-bg: #f5f7f1;
+    --a-surface: #ffffff;
+    --a-line: #e2e9d8;
+    --a-line-soft: #edf2e6;
+    --a-ink: #1f2e1f;
+    --a-muted: #66766a;
+    --a-faint: #94a294;
+    --a-hover: #f3f7ec;
+    --a-select: #e8f1dc;
+    --a-radius: 14px;
+    --a-radius-sm: 10px;
+    --a-shadow: 0 1px 2px rgba(8, 64, 8, .05), 0 6px 18px rgba(8, 64, 8, .05);
+
+    /* Status palette (text / tint) */
+    --st-new: #1d5f8f;        --st-new-bg: #e5f0f8;
+    --st-urgent: #b42318;     --st-urgent-bg: #fdeceb;
+    --st-progress: #8a5a00;   --st-progress-bg: #fff3d6;
+    --st-resolved: #006400;   --st-resolved-bg: #e4f1dc;
+    --st-neutral: #5c665c;    --st-neutral-bg: #eef0ec;
+
+    /* One spacing rule for every page hero (public + admin) */
+    --hero-pad-y: 44px;
+    --hero-pad-x: clamp(28px, 4vw, 56px);
+}
+
+body {
+    font-family: var(--glacial);
+    background-color: var(--white);
+    color: var(--dark-green);
+    font-size: var(--body-size);
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--glacial);
+    color: var(--dark-green);
+    font-weight: var(--title-weight);
+}
+
+/* ---------- Page shells ---------- */
+.site-shell { background: var(--a-bg); min-height: 60vh; color: var(--a-ink); }
+.admin-shell { background: var(--a-bg); min-height: 100vh; font-size: .9rem; color: var(--a-ink); }
+.admin-shell h1, .admin-shell h2, .admin-shell h3,
+.admin-shell h4, .admin-shell h5, .admin-shell h6 { color: var(--dark-green); }
+
+.site-container { max-width: 1240px; margin: 0 auto; padding: 28px 28px 56px; }
+.site-container.narrow { max-width: 1040px; }
+.admin-container { max-width: 1680px; margin: 0 auto; padding: 22px 28px 40px; }
+
+/* The white "no photo" icon, tinted green so it shows on white cards */
+.site-shell img[src$="product_icon.svg"],
+.admin-shell img[src$="product_icon.svg"],
+.a-modal img[src$="product_icon.svg"] {
+    filter: brightness(0) saturate(100%) invert(22%) sepia(90%) saturate(1500%) hue-rotate(95deg);
+    opacity: .45; max-width: 64px !important; max-height: 64px !important;
+}
+
+@media (max-width: 900px) {
+    .site-container { padding: 22px 16px 44px; }
+    .admin-container { padding: 18px 16px 32px; }
+}

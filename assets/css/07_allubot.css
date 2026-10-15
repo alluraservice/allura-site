@@ -1,0 +1,66 @@
+/* =====================================================================
+   70 - ALLUBOT - floating chat panel (bottom-right, public pages only)
+   (Same as the old allubot.css; only renamed so it loads last)
+   ===================================================================== */
+.allubot-panel {
+    position: fixed; right: 24px; bottom: 24px; z-index: 1060;
+    width: 380px; height: min(640px, calc(100vh - 120px));
+    display: flex; flex-direction: column;
+    background: #fff; border: 1px solid var(--a-line); border-radius: 20px;
+    box-shadow: 0 24px 60px rgba(8, 64, 8, .22), 0 4px 12px rgba(8, 64, 8, .08);
+    font-family: var(--glacial); overflow: hidden;
+    opacity: 0; visibility: hidden; transform: translateY(16px) scale(.98); transform-origin: bottom right;
+    transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+}
+.allubot-panel.open { opacity: 1; visibility: visible; transform: none; transition: opacity .18s ease, transform .18s ease, visibility 0s; }
+body:has(.admin-shell) .allubot-panel { display: none; }
+
+/* The white allubot1.svg tinted dark green */
+.allubot-head-avatar img, .allubot-avatar img {
+    width: 100%; height: 100%; object-fit: contain; display: block;
+    filter: brightness(0) invert(18%) sepia(34%) saturate(2256%) hue-rotate(82deg) brightness(96%) contrast(97%);
+}
+.allubot-head { display: flex; align-items: center; gap: 10px; padding: 12px 12px 12px 14px; background: linear-gradient(135deg, var(--dark-green) 0%, #0d5a0d 100%); color: #fff; }
+.allubot-head-avatar { width: 40px; height: 40px; border-radius: 50%; background: #fff; padding: 6px; flex-shrink: 0; display: inline-block; }
+.allubot-head-text { flex: 1; min-width: 0; line-height: 1.2; }
+.allubot-head-text b { display: block; font-size: 1rem; }
+.allubot-head-text span { font-size: .76rem; opacity: .85; display: inline-flex; align-items: center; gap: 6px; }
+.allubot-dot { width: 7px; height: 7px; border-radius: 50%; background: #7ee07e; display: inline-block; }
+.allubot-icon-btn { width: 32px; height: 32px; border-radius: 50%; border: 0; background: rgba(255,255,255,.12); color: #fff; font-size: 1.1rem; line-height: 1; cursor: pointer; transition: background .15s; }
+.allubot-icon-btn:hover { background: rgba(255,255,255,.28); }
+
+.allubot-messages { flex: 1; min-height: 120px; overflow-y: auto; padding: 16px 14px 10px; background: var(--a-bg); display: flex; flex-direction: column; gap: 10px; scroll-behavior: smooth; }
+.allubot-row { display: flex; gap: 8px; align-items: flex-end; animation: allubot-in .2s ease; }
+.allubot-row.user { justify-content: flex-end; }
+.allubot-avatar { width: 30px; height: 30px; border-radius: 50%; background: #fff; border: 1px solid var(--a-line); padding: 4px; flex-shrink: 0; display: inline-block; }
+.allubot-bot-col { display: flex; flex-direction: column; gap: 6px; max-width: 82%; min-width: 0; }
+.allubot-bubble { padding: 10px 13px; font-size: .88rem; line-height: 1.5; white-space: pre-line; word-wrap: break-word; }
+.allubot-bubble.bot { background: #fff; color: var(--a-ink); border: 1px solid var(--a-line); border-radius: 16px 16px 16px 4px; }
+.allubot-bubble.user { background: var(--green); color: #fff; border-radius: 16px 16px 4px 16px; max-width: 80%; }
+.allubot-links { display: flex; flex-wrap: wrap; gap: 6px; }
+.allubot-link { display: inline-flex; align-items: center; padding: 5px 11px; border-radius: 999px; background: var(--a-select); color: var(--dark-green); font-size: .78rem; font-weight: 700; text-decoration: none; transition: background .15s, color .15s; }
+.allubot-link::after { content: "\2192"; margin-left: 5px; }
+.allubot-link:hover { background: var(--green); color: #fff; }
+
+.allubot-choices { border-top: 1px solid var(--a-line); background: #fff; max-height: 48%; overflow-y: auto; padding: 10px 12px 8px; }
+.allubot-options { display: flex; flex-direction: column; gap: 6px; }
+.allubot-option {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+    text-align: left; border: 1.5px solid var(--a-line); background: #fff; color: var(--dark-green);
+    border-radius: 12px; padding: 9px 12px; font-family: var(--glacial); font-size: .86rem; font-weight: 700;
+    line-height: 1.3; cursor: pointer; transition: background .15s, border-color .15s, color .15s;
+}
+.allubot-option .arrow { color: var(--green); font-size: 1.1rem; line-height: 1; flex-shrink: 0; }
+.allubot-option:hover { background: var(--a-hover); border-color: var(--green); }
+.allubot-option:focus-visible, .allubot-nav-btn:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.allubot-nav { display: flex; gap: 6px; justify-content: center; padding-top: 8px; }
+.allubot-nav:empty { display: none; }
+.allubot-nav-btn { border: 0; background: transparent; color: var(--a-muted); font-family: var(--glacial); font-size: .78rem; font-weight: 700; padding: 5px 10px; border-radius: 999px; cursor: pointer; }
+.allubot-nav-btn:hover { background: var(--a-hover); color: var(--green); }
+.allubot-foot { font-size: .68rem; color: var(--a-faint); text-align: center; padding: 0 14px 10px; background: #fff; }
+
+@keyframes allubot-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (max-width: 599px) {
+    .allubot-panel { right: 8px; left: 8px; bottom: 8px; width: auto; height: calc(100vh - 90px); border-radius: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .allubot-panel, .allubot-row { transition: none; animation: none; } }

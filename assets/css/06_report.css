@@ -1,0 +1,63 @@
+/* =====================================================================
+   60 Â· ANALYTICS REPORT + ONE-PAGE PRINTING
+   The print fit is done by assets/admin_print.js: it lays the sheet out at A4
+   width, then shrinks it with transform: scale() until it fits ONE page.
+   The rules at the bottom also clip anything past page 1, so a second page
+   can never be produced.
+   ===================================================================== */
+.report-sheet { background: #fff; border: 1px solid var(--a-line); border-radius: 18px; box-shadow: var(--a-shadow); padding: 26px 28px 20px; }
+.report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding-bottom: 16px; border-bottom: 2px solid var(--green); }
+.report-head img { height: 42px; }
+.report-head .title { font-size: 1.35rem; font-weight: 700; color: var(--dark-green); letter-spacing: .02em; margin: 0; }
+.report-head .meta { text-align: right; font-size: .78rem; color: var(--a-muted); line-height: 1.5; }
+.report-head .meta b { color: var(--a-ink); }
+.report-grid { display: grid; gap: 16px; margin-top: 16px; }
+.report-grid.kpis { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 12px; }
+.report-grid.two { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
+.report-grid.two-even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.report-panel { border: 1px solid var(--a-line); border-radius: 14px; padding: 12px 14px; break-inside: avoid; min-width: 0; overflow: hidden; }
+.report-panel h6 { margin: 0 0 2px; font-size: .86rem; letter-spacing: .02em; }
+.report-panel .cap { font-size: .74rem; color: var(--a-muted); margin-bottom: 6px; }
+.report-panel .a-table { font-size: .8rem; }
+.report-panel .a-table thead th { padding: 7px 10px; font-size: .64rem; position: static; }
+.report-panel .a-table tbody td { padding: 7px 10px; }
+.highlights { margin: 0; padding-left: 18px; font-size: .86rem; line-height: 1.55; }
+.highlights li { margin-bottom: 3px; }
+.highlights li::marker { color: var(--green); }
+.report-foot { display: flex; justify-content: space-between; margin-top: 16px; padding-top: 10px; border-top: 1px solid var(--a-line-soft); font-size: .7rem; color: var(--a-faint); }
+.bar-inline { height: 6px; border-radius: 999px; background: var(--a-line-soft); overflow: hidden; min-width: 60px; }
+.bar-inline > div { height: 100%; background: var(--green); border-radius: 999px; }
+@media (max-width: 1200px) { .report-grid.kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .report-grid.two, .report-grid.two-even { grid-template-columns: 1fr; } }
+
+/* ---------- Print layout (body.printing-report is set by admin_print.js) ---------- */
+body.printing-report .report-sheet {
+    max-width: none; margin: 0; padding: 0; border: 0; border-radius: 0; box-shadow: none;
+    transform-origin: top left;
+}
+/* Always the desktop grid when printing, whatever the paper width */
+body.printing-report .report-grid.kpis { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+body.printing-report .report-grid.two { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) !important; }
+body.printing-report .report-grid.two-even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important; }
+/* A chart can never push the page wider than the paper */
+body.printing-report .report-panel .js-plotly-plot, body.printing-report .report-panel .plot-container,
+body.printing-report .report-panel .svg-container { max-width: 100% !important; }
+body.printing-report .stat { box-shadow: none; }
+body.printing-report .stat .v { font-size: 1.25rem; }
+
+@media print {
+    @page { size: A4 portrait; margin: 8mm; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    html:has(.report-sheet), html:has(.report-sheet) body {
+        background: #fff !important;
+        width: 194mm !important; height: 280mm !important;   /* exactly one A4 page inside the margins */
+        overflow: hidden !important; margin: 0 !important; padding: 0 !important;
+    }
+    body:has(.report-sheet) #navbar-container,
+    body:has(.report-sheet) .site-footer,
+    body:has(.report-sheet) .allubot-panel,
+    body:has(.report-sheet) .no-print { display: none !important; }
+    body:has(.report-sheet) .admin-shell { background: #fff !important; min-height: 0 !important; }
+    body:has(.report-sheet) .admin-container { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+    .report-sheet, .report-panel { break-inside: avoid; page-break-inside: avoid; }
+}
