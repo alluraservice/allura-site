@@ -19,6 +19,7 @@ def _category_cards():
         html.Div([
             html.A([
                 html.Div([
+                    html.Span(ui.icon_img(ui.catalog_icon(cat["name"])), className="category-icon"),
                     html.Div([
                         html.H3(cat["name"], className="category-title"),
                         html.P(cat.get("description") or "Explore advanced diagnostic solutions and clinical essentials.",
@@ -26,8 +27,7 @@ def _category_cards():
                     ], className="category-text-group"),
                     html.Span("view products", className="category-link-btn")
                 ], className="category-content")
-            ], href=ui.catalog_href('category', cat['id']), className="category-card",
-               style={"backgroundImage": f"url('/{str(cat.get('image_url') or '').lstrip('/')}')", "width": "100%"})
+            ], href=ui.catalog_href('category', cat['id']), className="category-card", style={"width": "100%"})
         ], className="col-lg-4 col-md-6 mb-4 category-col")
         for cat in categories
     ], className="row")

@@ -47,45 +47,49 @@
 .section-no-border-1 { padding-top: 60px; padding-bottom: 20px; }
 .section-no-border-2 { padding-top: 20px; padding-bottom: 40px; }
 
-/* ---------- Category cards (products) ---------- */
+/* ---------- Category cards (products): white card with the category icon ---------- */
 .category-card {
-    position: relative; border-radius: 16px; overflow: hidden; background-size: cover; background-position: center;
-    height: 320px; display: flex; flex-direction: column; justify-content: space-between; padding: 35px 30px;
-    text-decoration: none; box-shadow: 0 10px 20px rgba(0,0,0,.1); transition: transform .3s ease;
+    position: relative; border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid var(--a-line);
+    height: 320px; display: flex; flex-direction: column; padding: 32px 28px; text-decoration: none;
+    box-shadow: var(--a-shadow); transition: transform .3s ease, border-color .3s ease, box-shadow .3s ease;
 }
-.category-card:hover { transform: translateY(-5px); }
-.category-card::before {
-    content: ''; position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(180deg, rgba(8, 45, 25, .75) 0%, rgba(4, 25, 12, .96) 100%);
-}
+.category-card:hover { transform: translateY(-5px); border-color: var(--green); box-shadow: 0 14px 28px rgba(8, 64, 8, .12); }
 .category-content {
-    position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column;
-    align-items: center; justify-content: space-between; text-align: center; color: #fff;
+    position: relative; height: 100%; display: flex; flex-direction: column;
+    align-items: center; justify-content: space-between; text-align: center; gap: 14px;
 }
+.category-icon, .modality-icon {
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+    width: 88px; height: 88px; border-radius: 26px; background: var(--a-select); transition: background-color .3s ease;
+}
+.category-icon img, .modality-icon img { width: 50px; height: 50px; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); transition: filter .3s ease; }
+.category-card:hover .category-icon { background: var(--green); }
+.category-card:hover .category-icon img { filter: brightness(0) invert(1); }
 .category-text-group { margin: auto 0; width: 100%; }
-.category-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 12px; color: #fff; }
-.category-desc { font-size: .92rem; line-height: 1.4; color: #e2e8f0; margin-bottom: 0; }
+.category-title { font-size: 1.45rem; font-weight: 700; margin-bottom: 8px; color: var(--dark-green); }
+.category-desc { font-size: .9rem; line-height: 1.45; color: var(--a-muted); margin-bottom: 0; }
 .category-link-btn {
-    background-color: #fff; color: #0f3f23; padding: 8px 24px; border-radius: 50px; font-weight: 600; font-size: .9rem;
-    text-transform: lowercase; box-shadow: 0 4px 10px rgba(0,0,0,.15); transition: background-color .2s ease, color .2s ease;
+    background-color: var(--green); color: #fff; padding: 8px 24px; border-radius: 50px; font-weight: 600; font-size: .9rem;
+    text-transform: lowercase; box-shadow: 0 4px 10px rgba(0, 100, 0, .18); transition: background-color .2s ease;
 }
-.category-link-btn:hover { background-color: #0f3f23; color: #fff; }
+.category-card:hover .category-link-btn { background-color: var(--dark-green); }
 
-/* ---------- Modality cards + carousel (home) ---------- */
+/* ---------- Modality cards + carousel (home): white card with the modality icon ---------- */
 .modality-card {
-    position: relative; width: 240px !important; height: 240px !important; flex-shrink: 0;
-    border-radius: 24px; overflow: hidden; background-size: cover; background-position: center;
-    box-shadow: 0 10px 25px rgba(0,0,0,.1); display: flex; flex-direction: column; justify-content: flex-end;
-    padding: 24px; text-decoration: none; transition: transform .3s ease, box-shadow .3s ease;
+    position: relative; width: 220px !important; height: 240px !important; flex-shrink: 0;
+    border-radius: 22px; background: #fff; border: 1px solid var(--a-line); box-shadow: var(--a-shadow);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    padding: 24px 18px; text-align: center; text-decoration: none;
+    transition: transform .3s ease, box-shadow .3s ease, background-color .3s ease, border-color .3s ease;
 }
-.modality-card::before {
-    content: ''; position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(180deg, rgba(40, 120, 70, .4) 0%, rgba(20, 80, 45, .8) 100%);
-}
-.modality-card > * { position: relative; z-index: 2; }
-.modality-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,.15); }
-.modality-title { color: var(--white) !important; font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
-.modality-link { color: rgba(255,255,255,.85); font-size: .9rem; text-transform: lowercase; text-decoration: none; }
+.modality-card:hover { transform: translateY(-5px); background: var(--green); border-color: var(--green); box-shadow: 0 15px 30px rgba(8, 64, 8, .18); }
+.modality-card .modality-icon { margin-bottom: 8px; }
+.modality-card:hover .modality-icon { background: rgba(255, 255, 255, .16); }
+.modality-card:hover .modality-icon img { filter: brightness(0) invert(1); }
+.modality-title { color: var(--dark-green) !important; font-size: 1.25rem; font-weight: 700; margin: 0; transition: color .3s ease; }
+.modality-link { color: var(--a-muted); font-size: .85rem; text-transform: lowercase; text-decoration: none; transition: color .3s ease; }
+.modality-card:hover .modality-title { color: #fff !important; }
+.modality-card:hover .modality-link { color: rgba(255, 255, 255, .85); }
 
 .carousel-btn {
     position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 45px; height: 90px;
@@ -133,6 +137,9 @@
 .sidebar-all-products, .sidebar-category-title { font-weight: 700; color: #111827; font-size: 1rem; }
 .sidebar-modality-link { padding-left: 22px; font-weight: 400; color: #4b5563; font-size: .92rem; }
 .sidebar-modality-link.active { font-weight: 600; }
+.sidebar-row .side-ico { width: 18px; height: 18px; margin-right: 9px; vertical-align: -4px; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); opacity: .85; }
+.sidebar-modality-link .side-ico { width: 16px; height: 16px; opacity: .7; }
+.detail-facts .fact-ico { width: 18px; height: 18px; margin-right: 6px; vertical-align: -4px; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); }
 .catalog .item-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; }
 .catalog .item-toolbar .count { color: var(--a-muted); font-size: .84rem; margin-left: auto; }
 .catalog-empty { text-align: center; color: var(--a-muted); padding: 48px 20px; }

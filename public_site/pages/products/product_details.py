@@ -141,11 +141,15 @@ def update_product_detail_page(search):
                 html.P(short_desc, className="text-muted mb-4 fs-6", style={"lineHeight": "1.65"}),
                 html.Div([
                     html.Div([html.Div("Category", className="k"),
-                              html.Div(dcc.Link(category_name, href=cat_href), className="v")]),
+                              html.Div(dcc.Link([ui.icon_img(ui.catalog_icon(category_name), class_name="fact-ico"),
+                                                 category_name], href=cat_href), className="v")]),
                     html.Div([html.Div("Modality", className="k"),
-                              html.Div(dcc.Link(modality_name, href=mod_href), className="v")]),
+                              html.Div(dcc.Link([ui.icon_img(ui.catalog_icon(modality_name, ui.catalog_icon(category_name).rsplit('/', 1)[-1]),
+                                                             class_name="fact-ico"),
+                                                 modality_name], href=mod_href), className="v")]),
                 ], className="detail-facts"),
-                html.Button("Contact Sales", id="btn-open-quote-modal", n_clicks=0,
+                html.Button([ui.icon_img("/assets/icons/contact_us.svg", class_name="btn-ico btn-ico-white"), "Contact Sales"],
+                            id="btn-open-quote-modal", n_clicks=0,
                             className="btn btn-green rounded-pill fw-semibold px-4 py-2 text-white"),
                 html.Div([
                     "Need installation, maintenance or power protection for this equipment? ",

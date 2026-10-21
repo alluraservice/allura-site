@@ -25,6 +25,12 @@
     border: 1.5px solid var(--a-line) !important; padding: 7px 14px !important; font-weight: 700 !important;
 }
 .nav-menu .dropdown-toggle::after { display: none; }
+/* Menu button = the menu icon (same round icon button as Login / AlluBot) */
+.nav-menu .dropdown-toggle.nav-menu-toggle {
+    width: 40px; height: 40px; padding: 0 !important; border: 0 !important; border-radius: 50% !important;
+    background: transparent !important; justify-content: center; box-shadow: none !important;
+}
+.nav-menu .dropdown-toggle.nav-menu-toggle:hover, .nav-menu.show .nav-menu-toggle { background: var(--a-hover) !important; }
 .nav-menu .dropdown-menu { border: 1px solid var(--a-line); border-radius: 12px; box-shadow: var(--a-shadow); padding: 6px; min-width: 200px; }
 .nav-menu .dropdown-item { border-radius: 8px; color: var(--dark-green); padding: 9px 12px; }
 .nav-menu .dropdown-item:hover, .nav-menu .dropdown-item:focus { background: var(--a-hover); color: var(--green); }

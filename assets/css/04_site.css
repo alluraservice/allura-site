@@ -31,6 +31,12 @@
 .feature-card .tick-list:has(+ .home-card-link) { margin-bottom: 22px; }   /* breathing room above the button */
 .feature-card .tick-list li { color: #fff; }
 .feature-card .tick-list li::before { color: #9fd49a; }
+/* Icon badge at the top of the photo cards */
+.feature-icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 18px;
+    background: rgba(255, 255, 255, .14); border: 1px solid rgba(255, 255, 255, .35); margin-bottom: 2px;
+}
+.feature-icon img { width: 30px; height: 30px; filter: brightness(0) invert(1); }
 .tick-list { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 5px; font-size: .88rem; }
 .tick-list li { padding-left: 20px; position: relative; color: var(--a-ink); }
 .tick-list li::before { content: "\2713"; position: absolute; left: 0; color: var(--green); font-weight: 700; }
@@ -177,3 +183,16 @@
     .detail-facts { grid-template-columns: 1fr; }
     .phase { grid-template-columns: 1fr; gap: 4px; }
 }
+
+/* ---------- Icons inside buttons (Connect with Us, Chat with AlluBot, Service Inquiry, Contact Sales) ---------- */
+.btn-ico { width: 20px; height: 20px; flex-shrink: 0; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); }
+.btn-ico-white { filter: brightness(0) invert(1); }
+
+
+/* ---------- Social buttons on the home "Stay connected" card ---------- */
+.social-btn {
+    width: 46px; height: 46px; border-radius: 50%; background: #fff; display: inline-flex; align-items: center;
+    justify-content: center; box-shadow: 0 4px 10px rgba(0, 0, 0, .15); transition: transform .2s ease;
+}
+.social-btn:hover { transform: scale(1.08); }
+.social-btn img { width: 24px; height: 24px; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); }

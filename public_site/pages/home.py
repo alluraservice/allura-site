@@ -3,7 +3,7 @@ Home - works for everyone: hospitals that already know Allura and those meeting 
 
   1. Hero + short introduction
   2. What we do                         (equipment, service, consultation)
-  3. Imaging & radiology carousel       (live from the database)
+  3. Imaging & radiology carousel       (live from the database, one icon per modality)
   4. Why hospitals work with us         (credentials and capabilities)
   5. How working with us works          (how a request is handled, with a reference number)
   6. Contact, social and AlluBot cards
@@ -21,6 +21,7 @@ dash.register_page(__name__, path='/home')
 RECAP = [
     {
         "tag": "Equipment",
+        "icon": "product_icon.svg",
         "title": "Imaging & clinical equipment",
         "image": "/assets/pictures/products/radiology/radiology_cover.jpg",
         "text": "Diagnostic imaging and clinical systems for every department, from CT, MRI and ultrasound to X-ray, C-arm and cath lab.",
@@ -30,6 +31,7 @@ RECAP = [
     },
     {
         "tag": "Service",
+        "icon": "service_icon.svg",
         "title": "Installation & lifecycle care",
         "image": "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp",
         "text": "The same team that supplies your equipment installs it and keeps it running afterwards.",
@@ -38,6 +40,7 @@ RECAP = [
     },
     {
         "tag": "Consultation",
+        "icon": "contact_us.svg",
         "title": "Consultation & project planning",
         "image": "/assets/pictures/intensive_care_unit.jpg",
         "text": "Not sure yet what your department needs? We help you plan the right equipment, site and budget before you commit.",
@@ -91,10 +94,10 @@ def _modality_cards():
         modalities = []
     return [
         html.A([
+            html.Span(ui.icon_img(ui.catalog_icon(mod["name"], 'radiology.svg')), className="modality-icon"),
             html.H4(mod["name"], className="modality-title"),
-            html.Span("view products", className="modality-link")
-        ], href=ui.catalog_href('modality', mod['id']), className="modality-card",
-           style={"backgroundImage": f"linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('/{str(mod.get('image_url') or '').lstrip('/')}')"})
+            html.Span("view products  ›", className="modality-link")
+        ], href=ui.catalog_href('modality', mod['id']), className="modality-card")
         for mod in modalities
     ]
 
@@ -125,6 +128,7 @@ def layout(*args, **kwargs):
             html.Div([
                 html.Div(className="img", style={"backgroundImage": f"url('{r['image']}')"}),
                 html.Div([
+                    html.Span(ui.icon_img(f"/assets/icons/{r['icon']}"), className="feature-icon"),
                     html.Span(r["tag"], className="home-tag"),
                     html.H4(r["title"]),
                     html.P(r["text"]),
@@ -215,7 +219,8 @@ def layout(*args, **kwargs):
             "Let's Discuss Your Institution's Next Project",
             "Whether you need a product proposal, equipment demonstration, or technical consultation, "
             "our team is ready to assist you.",
-            html.A("Connect with Us", href="/contact_us", className="btn-white"),
+            html.A([ui.icon_img("/assets/icons/contact_us.svg", class_name="btn-ico"), "Connect with Us"],
+                   href="/contact_us", className="btn-white"),
             "/assets/pictures/home/home_contact_card.jpg",   # cropped from home_photo_1.jpeg (no logos)
             "center top",
         ),
@@ -225,9 +230,11 @@ def layout(*args, **kwargs):
             "Stay Connected With Allura",
             "Follow our journey, catch our latest industry updates, and connect with our team on social media.",
             html.Div([
-                html.A(html.Img(src='/assets/icons/facebook.svg'), href="https://facebook.com", target="_blank", className="me-3"),
-                html.A(html.Img(src='/assets/icons/linkedin.svg'), href="https://linkedin.com", target="_blank"),
-            ], className="d-flex align-items-center mt-3"),
+                html.A(html.Img(src='/assets/icons/facebook.svg', alt="Facebook"), href="https://facebook.com",
+                       target="_blank", title="Facebook", className="social-btn"),
+                html.A(html.Img(src='/assets/icons/linkedin.svg', alt="LinkedIn"), href="https://linkedin.com",
+                       target="_blank", title="LinkedIn", className="social-btn"),
+            ], className="d-flex align-items-center gap-3 mt-3"),
             "/assets/pictures/home/home_follow_card.jpg",    # cropped from home_photo_2.jpeg (no logos)
             "center top",
         ),
@@ -244,7 +251,8 @@ def layout(*args, **kwargs):
                                 "and instantly match your hospital with the right support.",
                                 className="card-text text-white"
                             ),
-                            html.Button(["Chat with AlluBot"], id="home_open_chatbot_btn",
+                            html.Button([ui.icon_img("/assets/icons/allubot1.svg", class_name="btn-ico"), "Chat with AlluBot"],
+                                        id="home_open_chatbot_btn",
                                         className="btn-white mt-3 d-inline-flex align-items-center")
                         ], className="p-5 d-flex flex-column justify-content-center h-100")
                     ], md=7),

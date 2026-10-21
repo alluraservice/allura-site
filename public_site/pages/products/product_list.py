@@ -44,13 +44,16 @@ def layout(*args, **kwargs):
     ]
     mobile_options = [{'label': 'All products', 'value': 'all|none'}]
     for cat in categories:
+        cat_icon = ui.catalog_icon(cat["name"])
         sidebar_children.append(html.Button(
-            cat["name"], id={'type': 'filter-btn', 'filter_type': 'category', 'target_id': str(cat['id'])},
+            [ui.icon_img(cat_icon, class_name="side-ico"), cat["name"]],
+            id={'type': 'filter-btn', 'filter_type': 'category', 'target_id': str(cat['id'])},
             className="sidebar-row sidebar-category-title btn bg-transparent text-start w-100"))
         mobile_options.append({'label': cat["name"], 'value': f"category|{cat['id']}"})
         for t in cat['types']:
             sidebar_children.append(html.Button(
-                t["name"], id={'type': 'filter-btn', 'filter_type': 'modality', 'target_id': str(t['id'])},
+                [ui.icon_img(ui.catalog_icon(t["name"], cat_icon.rsplit('/', 1)[-1]), class_name="side-ico"), t["name"]],
+                id={'type': 'filter-btn', 'filter_type': 'modality', 'target_id': str(t['id'])},
                 className="sidebar-row sidebar-modality-link btn bg-transparent text-start w-100"))
             mobile_options.append({'label': f"   {t['name']}", 'value': f"modality|{t['id']}"})
 

@@ -48,10 +48,11 @@ navbar = [
                     # Small screens: the same links in a Menu button
                     dbc.DropdownMenu(
                         [dbc.DropdownMenuItem(label, href=href) for label, href in NAV_LINKS],
-                        label="Menu", nav=False, align_end=True, className='nav-menu d-md-none',
-                        toggleClassName='btn-nav',
+                        label=html.Img(src=app.get_asset_url('icons/menu.svg'), alt='Menu'),
+                        nav=False, align_end=True, className='nav-menu d-md-none',
+                        toggleClassName='btn-nav-icon nav-menu-toggle', toggle_style={'border': 0},
                     ),
-                    html.A(html.Img(src=app.get_asset_url('icons/quote.svg'), alt='Login'),
+                    html.A(html.Img(src=app.get_asset_url('icons/my_account.svg'), alt='Login'),
                            href='#', id='btn-open-login-modal', title='Login', className='btn-nav-icon'),
                     html.A(html.Img(src=app.get_asset_url('icons/allubot1.svg'), alt='AlluBot'),
                            href='#', id='open_allubot_btn', title='AlluBot', className='btn-nav-icon'),

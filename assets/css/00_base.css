@@ -110,9 +110,9 @@ h1, h2, h3, h4, h5, h6 {
 .admin-container { max-width: 1680px; margin: 0 auto; padding: 22px 28px 40px; }
 
 /* The white "no photo" icon, tinted green so it shows on white cards */
-.site-shell img[src$="product_icon.svg"],
-.admin-shell img[src$="product_icon.svg"],
-.a-modal img[src$="product_icon.svg"] {
+.site-shell img[src$="product_icon.svg"]:not([class*="ico"]),
+.admin-shell img[src$="product_icon.svg"]:not([class*="ico"]),
+.a-modal img[src$="product_icon.svg"]:not([class*="ico"]) {
     filter: brightness(0) saturate(100%) invert(22%) sepia(90%) saturate(1500%) hue-rotate(95deg);
     opacity: .45; max-width: 64px !important; max-height: 64px !important;
 }

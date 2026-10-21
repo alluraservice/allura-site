@@ -36,10 +36,12 @@ admin_navbar = [
                         [
                             dbc.DropdownMenu(
                                 [dbc.DropdownMenuItem(label, href=href) for label, href in ADMIN_LINKS],
-                                label="Menu", align_end=True, className='nav-menu d-md-none', toggleClassName='btn-nav',
+                                label=html.Img(src=app.get_asset_url('icons/menu.svg'), alt='Menu'),
+                                align_end=True, className='nav-menu d-md-none',
+                                toggleClassName='btn-nav-icon nav-menu-toggle', toggle_style={'border': 0},
                             ),
                             dcc.Link(
-                                html.Img(src=app.get_asset_url('icons/accounts.svg'), alt='My Account'),
+                                html.Img(src=app.get_asset_url('icons/my_account.svg'), alt='My Account'),
                                 href='/admin/my-account', title='My Account', className='btn-nav-icon'
                             ),
                             dbc.Button("Logout", id='btn-open-logout-modal',

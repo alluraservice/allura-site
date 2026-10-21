@@ -9,18 +9,21 @@ from inquiry_forms import submit_inquiry
 SERVICE_AREAS = [
     {
         "title": "Medical Equipment Services",
+        "icon": "equipment_services.svg",
         "image": "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp",
         "text": "Installation and lifecycle care for imaging and clinical equipment, handled by trained engineers.",
         "points": ["Installation & commissioning", "Preventive maintenance programs", "Calibration & repairs"],
     },
     {
         "title": "Electrical Services",
+        "icon": "electrical_services.svg",
         "image": "/assets/pictures/services/electrical_services/electrical_service_cover.webp",
         "text": "Facility electrical work planned around the needs of sensitive diagnostic and clinical areas.",
         "points": ["Site preparation for new equipment", "Power distribution works", "Room shielding support"],
     },
     {
         "title": "Power Supply Services",
+        "icon": "power_supply_services.svg",
         "image": "/assets/pictures/services/power_supply_services/power_supply_service_cover.jpg",
         "text": "Medical-grade power protection so CT, MRI and other critical systems stay online.",
         "points": ["Medical-grade UPS systems", "Voltage stabilization", "UPS maintenance & battery care"],
@@ -64,7 +67,8 @@ def layout(*args, **kwargs):
                     "we deliver end-to-end technical support to keep your facility operational, safe, and efficient.",
                     className="card-text"
                 ),
-                html.Button("Service Inquiry", id="btn-open-service-modal", n_clicks=0, className="btn-white"),
+                html.Button([ui.icon_img("/assets/icons/service_icon.svg", class_name="btn-ico"), "Service Inquiry"],
+                            id="btn-open-service-modal", n_clicks=0, className="btn-white"),
             ], className="section-card-content")
         ], className="section-card", style={
             "backgroundImage": "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), "
@@ -84,6 +88,7 @@ def layout(*args, **kwargs):
             html.Div([
                 html.Div(className="img", style={"backgroundImage": f"url('{a['image']}')"}),
                 html.Div([
+                    html.Span(ui.icon_img(f"/assets/icons/{a['icon']}"), className="feature-icon"),
                     html.H4(a["title"]),
                     html.P(a["text"]),
                     html.Ul([html.Li(p) for p in a["points"]], className="tick-list"),

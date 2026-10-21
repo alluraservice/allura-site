@@ -11,6 +11,7 @@ import dash_bootstrap_components as dbc
 from dash import ALL, Input, Output, State, callback, ctx, dcc, html, no_update
 
 import admin_ui as ui
+from site_ui import catalog_icon, icon_img
 from database.db_handler import (delete_item, get_all_items, get_categories_with_types, get_item_by_id,
                                  get_item_counts, get_items_by_category, get_items_by_modality, set_item_active)
 
@@ -30,12 +31,15 @@ def layout(*args, **kwargs):
                     className="sidebar-row sidebar-all-products btn bg-transparent text-start w-100 active")
     ]
     for cat in _product_categories():
+        cat_icon = catalog_icon(cat["name"])
         sidebar_children.append(html.Button(
-            cat["name"], id={'type': 'adm-items-filter', 'filter_type': 'category', 'target_id': str(cat['id'])},
+            [icon_img(cat_icon, class_name="side-ico"), cat["name"]],
+            id={'type': 'adm-items-filter', 'filter_type': 'category', 'target_id': str(cat['id'])},
             className="sidebar-row sidebar-category-title btn bg-transparent text-start w-100"))
         for t in cat['types']:
             sidebar_children.append(html.Button(
-                t["name"], id={'type': 'adm-items-filter', 'filter_type': 'modality', 'target_id': str(t['id'])},
+                [icon_img(catalog_icon(t["name"], cat_icon.rsplit('/', 1)[-1]), class_name="side-ico"), t["name"]],
+                id={'type': 'adm-items-filter', 'filter_type': 'modality', 'target_id': str(t['id'])},
                 className="sidebar-row sidebar-modality-link btn bg-transparent text-start w-100"))
 
     toolbar = html.Div([
