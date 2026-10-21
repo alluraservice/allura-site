@@ -19,7 +19,8 @@ dash.register_page(__name__, path='/admin/analytics')
 
 GREEN, GREEN_LIGHT, INK, MUTED, GRID = '#006400', '#7fb069', '#1f2e1f', '#66766a', '#edf2e6'
 STATUS_COLORS = {'New': '#1d5f8f', 'Urgent': '#b42318', 'In Progress': '#c99700', 'Resolved': '#006400'}
-FONT = dict(family="Glacial Indifference, Inter, sans-serif", size=11, color=INK)
+# Charts don't read the CSS, so the brand font is named here too (loaded by assets/css/00_base.css)
+FONT = dict(family="League Spartan, sans-serif", size=11, color=INK)
 GRAPH_CONFIG = {'displayModeBar': False}
 
 

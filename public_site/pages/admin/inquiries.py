@@ -14,16 +14,25 @@ Other features: folders with counts (unread, starred, assigned to me, by status,
 search + filters + sort, star / read / archive, bulk actions, status / priority / assignee / labels
 per inquiry (autosaved), reply by email with templates, internal notes, activity thread, CSV export.
 /admin/inquiries?open=<id> opens that inquiry directly (used by the dashboard).
+
+Print / PDF (button in the reading pane) prints either:
+    Inquiry record - the inquiry on letterhead, optionally with replies and internal notes
+    Quotation      - a client quotation (line items, VAT, validity, delivery, warranty, payment terms)
+The document is built in print_docs.py, loaded into a hidden frame and sent to the browser's print
+dialog; choose "Save as PDF" there to get the PDF. Printing a quotation is logged in the activity thread.
 """
 import re
+from datetime import date
 from urllib.parse import parse_qs
 
 import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
-from dash import ALL, Input, Output, State, callback, ctx, dcc, html, no_update
+from dash import ALL, Input, Output, State, callback, clientside_callback, ctx, dash_table, dcc, html, no_update
+from dash.dash_table.Format import Format, Group, Scheme
 
 import admin_ui as ui
+import public_site.print_docs as print_docs
 from database.db_handler import (INQUIRY_LABELS, INQUIRY_PRIORITIES, INQUIRY_SOURCES, INQUIRY_STATUSES,
                                  SOURCE_DESCRIPTIONS, add_inquiry_message, bulk_update_inquiries,
                                  get_account_by_email, get_all_accounts, get_inquiries_by_ids, get_inquiry_detail,
@@ -70,6 +79,11 @@ TEMPLATES = {
               "resolved, but please don't hesitate to reply to this email if you need anything else."),
 }
 
+# Quotation defaults (editable in the print window every time)
+QUOTE_DEFAULTS = {'validity': "30 days from the date of this quotation", 'delivery': "", 'warranty': "",
+                  'payment': ""}
+EMPTY_LINE = {'item': '', 'qty': 1, 'price': None}
+
 
 def _folder_button(key, label, icon):
     return html.Button([
@@ -92,6 +106,104 @@ def _select(id_, options, placeholder=None, value=None, cls="a-input"):
 def _v(x):
     """Select value -> None when it's the "any / none" choice."""
     return None if x in (None, '', ANY) else x
+
+
+def _field(label, component, hint=None):
+    return html.Div([html.Label(label, className="a-label"), component,
+                     html.Div(hint, className="pr-hint") if hint else None])
+
+
+def _print_modal():
+    """Print / PDF window: choose the document, adjust it, then print."""
+    record_opts = html.Div([
+        html.Div("Include", className="a-label"),
+        dbc.Checklist(id='inq-pr-include', value=['thread'], className="pr-checks", options=[
+            {'label': "Email replies sent to the client", 'value': 'thread'},
+            {'label': "Internal notes and activity (team only, don't send to the client)", 'value': 'internal'},
+        ]),
+    ], id='inq-pr-record-opts')
+
+    items_table = dash_table.DataTable(
+        id='inq-pr-items',
+        columns=[{'name': 'Item / description', 'id': 'item', 'type': 'text'},
+                 {'name': 'Qty', 'id': 'qty', 'type': 'numeric'},
+                 {'name': 'Unit price (PHP)', 'id': 'price', 'type': 'numeric',
+                  'format': Format(precision=2, scheme=Scheme.fixed, group=Group.yes)}],
+        data=[dict(EMPTY_LINE)], editable=True, row_deletable=True,
+        style_table={'overflowX': 'auto'},
+        style_cell={'fontFamily': 'var(--font-brand)', 'fontSize': '.86rem', 'padding': '8px 10px',
+                    'whiteSpace': 'normal', 'height': 'auto', 'textAlign': 'left', 'border': '1px solid var(--a-line)'},
+        style_cell_conditional=[{'if': {'column_id': 'qty'}, 'width': '70px', 'textAlign': 'right'},
+                                {'if': {'column_id': 'price'}, 'width': '160px', 'textAlign': 'right'}],
+        style_header={'backgroundColor': 'var(--a-hover)', 'fontWeight': 700, 'color': 'var(--dark-green)'},
+        css=[{'selector': '.dash-spreadsheet td div', 'rule': 'line-height: 1.35;'},
+             {'selector': 'td.cell--selected, td.focused',
+              'rule': 'background-color: var(--a-select) !important; border: 1px solid var(--green) !important;'}],
+    )
+
+    quote_opts = html.Div([
+        html.Div([
+            _field("To", dbc.Textarea(id='inq-pr-to', className="a-input", style={'height': '118px'}),
+                   "Name and title, department, hospital, address — one per line."),
+            html.Div([
+                _field("Date", dbc.Input(id='inq-pr-date', type='date', className="a-input")),
+                _field("Subject", dbc.Input(id='inq-pr-subject', className="a-input")),
+            ], className="pr-stack"),
+        ], className="pr-grid"),
+        html.Div([
+            _field("Greeting", dbc.Input(id='inq-pr-salutation', className="a-input")),
+        ], className="mt-2"),
+        _field("Opening paragraph", dbc.Textarea(id='inq-pr-intro', className="a-input", style={'height': '70px'})),
+
+        html.Div([html.Div("Items", className="a-label mb-0"),
+                  html.Button("+ Add line", id='inq-pr-add-row', n_clicks=0, className="a-btn a-btn-outline a-btn-sm")],
+                 className="d-flex justify-content-between align-items-center mt-3 mb-1"),
+        items_table,
+        html.Div(id='inq-pr-total', className="pr-total"),
+
+        html.Div([
+            _field("VAT", dbc.Select(id='inq-pr-vat', value='incl', className="a-input",
+                                     options=[{'label': "Prices are VAT inclusive", 'value': 'incl'},
+                                              {'label': "Prices are VAT exclusive (add 12%)", 'value': 'excl'},
+                                              {'label': "VAT exempt", 'value': 'exempt'}])),
+            _field("Validity", dbc.Input(id='inq-pr-validity', className="a-input")),
+            _field("Delivery", dbc.Input(id='inq-pr-delivery', className="a-input",
+                                         placeholder="e.g. 8 to 12 weeks from receipt of PO")),
+            _field("Warranty", dbc.Input(id='inq-pr-warranty', className="a-input",
+                                         placeholder="e.g. 12 months parts and labor")),
+            _field("Payment terms", dbc.Input(id='inq-pr-payment', className="a-input",
+                                              placeholder="e.g. 50% down payment, 50% upon installation")),
+        ], className="pr-grid pr-grid-terms mt-3"),
+        _field("Notes (inclusions, exclusions, site requirements)",
+               dbc.Textarea(id='inq-pr-notes', className="a-input", style={'height': '64px'},
+                            placeholder="Optional")),
+    ], id='inq-pr-quote-opts', style={'display': 'none'})
+
+    return dbc.Modal(dbc.ModalBody([
+        html.Div([
+            html.Div([
+                html.H4("Print or save as PDF"),
+                html.P(["Opens your browser's print window. To get a PDF, choose ",
+                        html.B("Save as PDF"), " as the printer."], className="modal-sub mb-0"),
+            ]),
+            html.Button(type="button", id='inq-pr-x', className="btn-close ms-auto", **{"aria-label": "Close"}),
+        ], className="d-flex align-items-start gap-3 mb-3"),
+
+        dbc.RadioItems(id='inq-pr-kind', value='record', className="pr-kind", inline=True,
+                       inputClassName="btn-check", labelClassName="pr-kind-btn",
+                       labelCheckedClassName="active", options=[
+                           {'label': html.Span([html.B("Inquiry record"),
+                                                html.Span("The inquiry on letterhead, for filing")]), 'value': 'record'},
+                           {'label': html.Span([html.B("Quotation"),
+                                                html.Span("Prices and terms, to send to the client")]), 'value': 'quote'},
+                       ]),
+        html.Div([record_opts, quote_opts], className="mt-3"),
+        html.Div(id='inq-pr-status', className="mt-2"),
+        html.Div([
+            html.Button("Cancel", id='inq-pr-cancel', n_clicks=0, className="a-btn a-btn-light"),
+            html.Button("Print / Save as PDF", id='inq-pr-go', n_clicks=0, className="a-btn a-btn-primary"),
+        ], className="modal-actions"),
+    ]), id='inq-pr-modal', is_open=False, size='lg', centered=True, scrollable=True, className="a-modal")
 
 
 def layout():
@@ -167,6 +279,8 @@ def layout():
                 html.Div([
                     html.Div(id='inq-reader-head', style={'minWidth': 0}),
                     html.Div([
+                        html.Button("Print / PDF", id='inq-act-print', n_clicks=0,
+                                    className="a-btn a-btn-outline a-btn-sm", title="Print the inquiry or a quotation"),
                         html.Button("☆", id='inq-act-star', n_clicks=0, className="a-icon-btn", title="Star"),
                         html.Button("✉", id='inq-act-unread', n_clicks=0, className="a-icon-btn", title="Mark as unread"),
                         html.Button("▤", id='inq-act-archive', n_clicks=0, className="a-icon-btn", title="Archive"),
@@ -230,7 +344,14 @@ def layout():
         dcc.Store(id='inq-active', data=None),
         dcc.Store(id='inq-refresh', data=0),
         dcc.Store(id='inq-visible-ids', data=[]),
+        dcc.Store(id='inq-print-doc', data=None),
         dcc.Download(id='inq-download'),
+        # Hidden frame the printable document is loaded into (see the clientside callback at the bottom)
+        html.Iframe(id='inq-print-frame', title="Print preview", className="no-print",
+                    style={'position': 'absolute', 'left': '-10000px', 'top': 0, 'width': '210mm', 'height': '297mm',
+                           'border': 0}),
+        html.Div(id='inq-print-dummy', style={'display': 'none'}),
+        _print_modal(),
 
         ui.page_header(
             "Inquiries",
@@ -262,6 +383,12 @@ def _clicked():
 def _subject_line(text, n=70):
     first = (text or '').strip().split('\n')[0]
     return first if len(first) <= n else first[:n].rsplit(' ', 1)[0] + '…'
+
+
+def _topic(iq):
+    """The product for Contact Sales quotes, otherwise the first sentence of the client's message."""
+    first = re.split(r'(?<=[.!?])\s|\n', (iq.get('machine_inquiry') or '').strip(), maxsplit=1)[0]
+    return iq.get('source_detail') or _subject_line(first, 80).rstrip('.!?…') or 'your request'
 
 
 def _row(iq, active_id):
@@ -704,12 +831,9 @@ def apply_template(key, active_id, s_name, s_email):
         raise dash.exceptions.PreventUpdate
     iq = get_inquiry_detail(active_id) or {}
     me = _me(s_email) or {}
-    # The product for Contact Sales quotes, otherwise the first sentence of the client's message
-    first = re.split(r'(?<=[.!?])\s|\n', (iq.get('machine_inquiry') or '').strip(), maxsplit=1)[0]
-    topic = iq.get('source_detail') or _subject_line(first, 80).rstrip('.!?…') or 'your request'
     text = TEMPLATES[key][1].format(contact=iq.get('contact_person') or iq.get('customer_name') or 'Sir/Madam',
                                     customer=iq.get('customer_name') or 'your facility',
-                                    topic=topic, ref=iq.get('reference_no') or '')
+                                    topic=_topic(iq), ref=iq.get('reference_no') or '')
     agent = me.get('name') or s_name or 'The Allura Team'
     role = f"{me['role']}\n" if me.get('role') else ""
     text += f"\n\nBest regards,\n{agent}\n{role}{SIGNATURE_TAIL}"
@@ -794,6 +918,183 @@ def add_note(_, body, active_id, refresh, s_name, s_email):
 )
 def clear_compose_status(_):
     return None
+
+
+# ---------------------------------------------------------------------
+# Print / PDF
+# ---------------------------------------------------------------------
+@callback(
+    Output('inq-pr-modal', 'is_open'),
+    Output('inq-pr-status', 'children'),
+    Output('inq-pr-to', 'value'),
+    Output('inq-pr-date', 'value'),
+    Output('inq-pr-subject', 'value'),
+    Output('inq-pr-salutation', 'value'),
+    Output('inq-pr-intro', 'value'),
+    Output('inq-pr-items', 'data'),
+    Output('inq-pr-validity', 'value'),
+    Output('inq-pr-delivery', 'value'),
+    Output('inq-pr-warranty', 'value'),
+    Output('inq-pr-payment', 'value'),
+    Output('inq-pr-notes', 'value'),
+    Input('inq-act-print', 'n_clicks'),
+    Input('inq-pr-cancel', 'n_clicks'),
+    Input('inq-pr-x', 'n_clicks'),
+    State('inq-active', 'data'),
+    prevent_initial_call=True,
+)
+def open_print_window(_p, _c, _x, active_id):
+    """Opens the print window, pre-filled from the inquiry (a fresh quotation draft each time)."""
+    keep = (no_update,) * 11
+    if ctx.triggered_id != 'inq-act-print':
+        return (False, None) + keep
+    iq = get_inquiry_detail(active_id) if active_id else None
+    if not iq or not _clicked():
+        raise dash.exceptions.PreventUpdate
+
+    topic = _topic(iq)
+    to_block = "\n".join(x for x in [iq.get('contact_person'), iq.get('department'), iq.get('customer_name'),
+                                     iq.get('address')] if (x or '').strip())
+    contact = (iq.get('contact_person') or '').strip()
+    salutation = f"Dear {contact}," if contact else "Dear Sir or Madam,"
+    intro = (f"Thank you for your inquiry (reference {iq.get('reference_no')}) regarding {topic}. "
+             f"Below is our quotation for {iq.get('customer_name') or 'your facility'}.")
+    first_line = dict(EMPTY_LINE, item=iq.get('source_detail') or '')
+    return (True, None, to_block, date.today().isoformat(), f"Quotation for {topic}", salutation, intro,
+            [first_line], QUOTE_DEFAULTS['validity'], QUOTE_DEFAULTS['delivery'], QUOTE_DEFAULTS['warranty'],
+            QUOTE_DEFAULTS['payment'], '')
+
+
+@callback(
+    Output('inq-pr-record-opts', 'style'),
+    Output('inq-pr-quote-opts', 'style'),
+    Input('inq-pr-kind', 'value'),
+)
+def print_kind(kind):
+    quote = kind == 'quote'
+    return ({'display': 'none'} if quote else {}), ({} if quote else {'display': 'none'})
+
+
+@callback(
+    Output('inq-pr-items', 'data', allow_duplicate=True),
+    Input('inq-pr-add-row', 'n_clicks'),
+    State('inq-pr-items', 'data'),
+    prevent_initial_call=True,
+)
+def add_quote_line(n, rows):
+    if not n:
+        raise dash.exceptions.PreventUpdate
+    return (rows or []) + [dict(EMPTY_LINE)]
+
+
+@callback(
+    Output('inq-pr-total', 'children'),
+    Input('inq-pr-items', 'data'),
+    Input('inq-pr-vat', 'value'),
+)
+def quote_total_preview(rows, vat_mode):
+    lines = print_docs.quote_lines(rows)
+    if not lines:
+        return "Add at least one item."
+    extra, total, label = print_docs.quote_totals(lines, vat_mode)
+    bits = [html.Span(f"{k}: {print_docs.money(v)}", className="me-3") for k, v in extra]
+    return [*bits, html.B(f"{label}: PHP {print_docs.money(total)}")]
+
+
+@callback(
+    Output('inq-print-doc', 'data'),
+    Output('inq-pr-status', 'children', allow_duplicate=True),
+    Output('inq-pr-modal', 'is_open', allow_duplicate=True),
+    Output('inq-refresh', 'data', allow_duplicate=True),
+    Input('inq-pr-go', 'n_clicks'),
+    State('inq-pr-kind', 'value'),
+    State('inq-pr-include', 'value'),
+    State('inq-pr-to', 'value'),
+    State('inq-pr-date', 'value'),
+    State('inq-pr-subject', 'value'),
+    State('inq-pr-salutation', 'value'),
+    State('inq-pr-intro', 'value'),
+    State('inq-pr-items', 'data'),
+    State('inq-pr-vat', 'value'),
+    State('inq-pr-validity', 'value'),
+    State('inq-pr-delivery', 'value'),
+    State('inq-pr-warranty', 'value'),
+    State('inq-pr-payment', 'value'),
+    State('inq-pr-notes', 'value'),
+    State('inq-active', 'data'),
+    State('inq-refresh', 'data'),
+    State('session-admin-name', 'data'),
+    State('session-admin-email', 'data'),
+    prevent_initial_call=True,
+)
+def build_print_doc(n, kind, include, to_block, doc_day, subject, salutation, intro, rows, vat_mode, validity,
+                    delivery, warranty, payment, notes, active_id, refresh, s_name, s_email):
+    if not n:
+        raise dash.exceptions.PreventUpdate
+    iq = get_inquiry_detail(active_id) if active_id else None
+    if not iq:
+        return no_update, ui.alert("Open an inquiry first.", 'warn'), no_update, no_update
+    me = _me(s_email) or {}
+    author = me.get('name') or s_name or 'Admin'
+    nonce = pd.Timestamp.now().value       # so printing the same document twice still triggers the print
+
+    if kind != 'quote':
+        include = include or []
+        page, title = print_docs.inquiry_record_html(
+            iq, get_inquiry_messages(iq['id']), include_thread='thread' in include,
+            include_internal='internal' in include, printed_by=author,
+            source_description=SOURCE_DESCRIPTIONS.get(iq.get('source_v')))
+        return {'html': page, 'title': title, 'n': nonce}, None, False, no_update
+
+    lines = print_docs.quote_lines(rows)
+    if not lines:
+        return no_update, ui.alert("Add at least one item to the quotation.", 'warn'), no_update, no_update
+    if any(p is None for _, _, p, _ in lines):
+        return no_update, ui.alert("Every item needs a unit price (use 0 for items included free of charge).",
+                                   'warn'), no_update, no_update
+    if not (to_block or '').strip():
+        return no_update, ui.alert("Fill in who the quotation is addressed to.", 'warn'), no_update, no_update
+
+    page, title, total = print_docs.quotation_html(
+        iq, to_block=to_block, subject=subject or f"Quotation for {_topic(iq)}",
+        salutation=salutation or "Dear Sir or Madam,", intro=intro, rows=rows, vat_mode=vat_mode or 'incl',
+        doc_day=doc_day, validity=validity, delivery=delivery, warranty=warranty, payment=payment, notes=notes,
+        prepared_by=author, prepared_role=me.get('role'), prepared_email=me.get('email') or s_email)
+    _, _, label = print_docs.quote_totals(lines, vat_mode)
+    add_inquiry_message(active_id, 'event', f"printed a quotation · {label}: PHP {print_docs.money(total)}",
+                        author=author, author_email=s_email)
+    return {'html': page, 'title': title, 'n': nonce}, None, False, (refresh or 0) + 1
+
+
+# Loads the document into the hidden frame, waits for the font and logo, then opens the print dialog.
+# The page title is swapped for a moment so "Save as PDF" suggests e.g. "ALR-2610-00042 Quotation - Hospital".
+clientside_callback(
+    """
+    function(doc) {
+        if (!doc || !doc.html) { return ''; }
+        var frame = document.getElementById('inq-print-frame');
+        if (!frame) { return ''; }
+        frame.onload = function () {
+            var w = frame.contentWindow;
+            var ready = (w.document.fonts && w.document.fonts.ready) ? w.document.fonts.ready : Promise.resolve();
+            ready.then(function () {
+                setTimeout(function () {
+                    var oldTitle = document.title;
+                    document.title = doc.title || oldTitle;
+                    w.focus();
+                    w.print();
+                    setTimeout(function () { document.title = oldTitle; }, 1000);
+                }, 150);
+            });
+        };
+        frame.srcdoc = doc.html;
+        return '';
+    }
+    """,
+    Output('inq-print-dummy', 'children'),
+    Input('inq-print-doc', 'data'),
+    prevent_initial_call=True,
+)
 
 
 # ---------------------------------------------------------------------

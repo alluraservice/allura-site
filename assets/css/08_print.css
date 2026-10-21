@@ -1,0 +1,32 @@
+/* =====================================================================
+   08 · PRINT / PDF window in Admin › Inquiries
+   (The printed documents themselves carry their own styles: public_site/print_docs.py)
+   ===================================================================== */
+.reader-actions { align-items: center; gap: 4px; }
+.reader-actions .a-btn { margin-right: 4px; white-space: nowrap; }
+
+/* Document choice: two cards */
+.pr-kind { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.pr-kind .form-check { margin: 0; padding: 0; }
+.pr-kind-btn {
+    display: block; width: 100%; height: 100%; cursor: pointer; padding: 12px 16px; border-radius: 12px;
+    border: 1.5px solid var(--a-line); background: #fff; transition: border-color .12s, background .12s;
+}
+.pr-kind-btn:hover { background: var(--a-hover); }
+.pr-kind-btn.active { border-color: var(--green); background: var(--a-select); }
+.pr-kind-btn b { display: block; color: var(--dark-green); font-size: .95rem; }
+.pr-kind-btn span span { display: block; color: var(--a-muted); font-size: .8rem; margin-top: 2px; }
+
+.pr-checks .form-check { margin-bottom: 6px; font-size: .88rem; }
+.pr-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.pr-grid-terms { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pr-stack { display: grid; gap: 10px; align-content: start; }
+.pr-hint { font-size: .74rem; color: var(--a-faint); margin-top: 3px; }
+#inq-pr-quote-opts > div { margin-bottom: 10px; }
+.pr-total {
+    display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: baseline; gap: 4px;
+    padding: 10px 12px; margin-top: 8px; border-radius: 10px; background: var(--a-hover);
+    font-size: .86rem; color: var(--a-muted);
+}
+.pr-total b { color: var(--dark-green); font-size: .95rem; }
+@media (max-width: 700px) { .pr-kind, .pr-grid, .pr-grid-terms { grid-template-columns: 1fr; } }
