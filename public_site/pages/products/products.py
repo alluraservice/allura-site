@@ -54,7 +54,7 @@ def layout(*args, **kwargs):
                     html.A("View All Products", href="/products/all", className="btn-white")
                 ], className="section-card-content")
             ], className="section-card", style={
-                "backgroundImage": "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/pictures/products/radiology/ct_scan/ct_5300.png')",
+                "backgroundImage": "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('/assets/pictures/products/radiology/radiology_cover.jpg')",
                 "maxWidth": "none", "margin": "0"}),
 
             # Categories
