@@ -153,7 +153,7 @@ def update_product_detail_page(search):
                             className="btn btn-green rounded-pill fw-semibold px-4 py-2 text-white"),
                 html.Div([
                     "Need installation, maintenance or power protection for this equipment? ",
-                    dcc.Link("See our services →", href="/services"),
+                    dcc.Link("See our services →", href="/services", style={"whiteSpace": "nowrap"}),  # keep the link on one line
                 ], className="service-note"),
             ], className="col-lg-7 col-md-6 ps-lg-5"),
         ], className="row align-items-center"),
