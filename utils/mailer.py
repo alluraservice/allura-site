@@ -260,12 +260,12 @@ def send_inquiry_acknowledgement(to, contact_name, reference_no, source, summary
     first = (contact_name or '').strip() or 'Sir/Madam'
     title = f"We received your inquiry [{reference_no}]"
     text = (f"Dear {first},\n\nThank you for contacting Allura Enterprise. We received your inquiry "
-            f"({source}) and our team will get back to you within one business day.\n\n"
+            f"({source}) and our team will get back to you as soon as possible.\n\n"
             f"Reference no.: {reference_no}\n\nYour message:\n{summary}\n\n"
             f"Please mention the reference number if you call or email us about this request.\n\n- Allura Enterprise")
     body = (f"<p>Dear {_html.escape(first)},</p>"
             f"<p>Thank you for contacting Allura Enterprise. We received your inquiry and our team will get back to you "
-            f"within one business day.</p>{_ref_box(reference_no)}"
+            f"as soon as possible.</p>{_ref_box(reference_no)}"
             f"<p style='color:#5b6b5b;font-size:13px;margin-bottom:4px;'>Your message</p>"
             f"<div style='border-left:3px solid #d6e3c6;padding-left:12px;'>{text_to_html(summary)}</div>"
             f"<p style='margin-top:18px;'>Please mention the reference number if you call or email us about this request.</p>")

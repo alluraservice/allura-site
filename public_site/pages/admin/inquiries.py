@@ -56,7 +56,7 @@ SIGNATURE_TAIL = "Allura Enterprise\ninfo@alluraenterpriseph.com  |  +63 917 770
 TEMPLATES = {
     'ack': ("Acknowledge receipt",
             "Dear {contact},\n\nThank you for reaching out to Allura Enterprise regarding {topic} (reference no. {ref}). "
-            "We have received your inquiry and a member of our team will get back to you within one (1) business day."),
+            "We have received your inquiry and a member of our team will get back to you as soon as possible."),
     'quote': ("Quotation to follow",
               "Dear {contact},\n\nThank you for your interest in {topic}. We are preparing a formal quotation for "
               "{customer} and will send it to you shortly. It will include pricing, lead time, installation "

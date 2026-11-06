@@ -30,10 +30,7 @@ def _info(icon, key, value):
 
 def layout(*args, **kwargs):
     form_card = html.Div([
-        html.Div([
-            html.H6("Inquiry form"),
-            html.Span("We usually reply within one business day", className="text-muted small"),
-        ], className="a-card-head"),
+        html.Div(html.H6("Inquiry form"), className="a-card-head"),
         html.Div([
             html.Div([
                 _field("Customer / Hospital Name", dbc.Input(type="text", id="contact-customer-name", placeholder="Enter your customer/hospital name here", className="input-box")),
@@ -46,12 +43,9 @@ def layout(*args, **kwargs):
                 _field("Remarks (Optional)", dbc.Textarea(id="contact-remarks", placeholder="Enter your remarks here", className="input-box", style={"height": "130px"})),
             ], className="form-row"),
             html.Div(id="contact-feedback", className="mt-3"),
-            html.Div([
-                html.Span(["By submitting this form, you accept our ",
-                           html.A("Privacy Policy", href="/privacy-policy", style={"color": "var(--green)"}), "."],
-                          className="text-muted small"),
+            html.Div(
                 dbc.Button("Submit", id="contact-submit-btn", n_clicks=0, className="a-btn a-btn-primary a-btn-lg"),
-            ], className="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-4"),
+                className="d-flex justify-content-end mt-4"),
         ], className="a-card-body", style={"padding": "20px 22px 22px"}),
     ], className="a-card")
 
@@ -65,8 +59,8 @@ def layout(*args, **kwargs):
             html.Div([
                 html.Div("Follow us", className="a-section-title mt-3"),
                 html.Div([
-                    html.A(html.Img(src='/assets/icons/facebook.svg'), href="https://facebook.com", target="_blank", title="Facebook"),
-                    html.A(html.Img(src='/assets/icons/linkedin.svg'), href="https://linkedin.com", target="_blank", title="LinkedIn"),
+                    html.A(html.Img(src='/assets/icons/facebook.svg'), href="https://www.facebook.com/profile.php?id=61589813960476", target="_blank", rel="noopener noreferrer", title="Facebook"),
+                    html.A(html.Img(src='/assets/icons/linkedin.svg'), href="https://www.linkedin.com/company/allura-enterprise/", target="_blank", rel="noopener noreferrer", title="LinkedIn"),
                 ], className="social-row"),
             ]),
         ], className="a-card-body"),

@@ -75,7 +75,7 @@ LESSER_KNOWN = [
 NEXT_STEPS = [
     ("Send your request", "Use Contact Sales on a product, the Services form, or Contact Us. You get a reference "
                           "number right away."),
-    ("We reply within a business day", "Our team follows up by email or phone, quoting your reference number."),
+    ("We get back to you", "Our team follows up by email or phone, quoting your reference number."),
     ("Assessment & proposal", "Where needed we visit the site, then send a clear scope, quotation and schedule."),
     ("Delivery & after-sales", "Installation, handover and maintenance plans, with the same team from start to finish."),
 ]
@@ -230,9 +230,9 @@ def layout(*args, **kwargs):
             "Stay Connected With Allura",
             "Follow our journey, catch our latest industry updates, and connect with our team on social media.",
             html.Div([
-                html.A(html.Img(src='/assets/icons/facebook.svg', alt="Facebook"), href="https://facebook.com",
+                html.A(html.Img(src='/assets/icons/facebook.svg', alt="Facebook"), href="https://www.facebook.com/profile.php?id=61589813960476", rel="noopener noreferrer",
                        target="_blank", title="Facebook", className="social-btn"),
-                html.A(html.Img(src='/assets/icons/linkedin.svg', alt="LinkedIn"), href="https://linkedin.com",
+                html.A(html.Img(src='/assets/icons/linkedin.svg', alt="LinkedIn"), href="https://www.linkedin.com/company/allura-enterprise/", rel="noopener noreferrer",
                        target="_blank", title="LinkedIn", className="social-btn"),
             ], className="d-flex align-items-center gap-3 mt-3"),
             "/assets/pictures/home/home_follow_card.jpg",    # cropped from home_photo_2.jpeg (no logos)

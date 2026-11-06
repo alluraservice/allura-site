@@ -1,0 +1,72 @@
+/* =====================================================================
+   90 · PHONES AND SMALL TABLETS
+   Loaded last (Dash loads assets/css in name order), so these rules refine the
+   desktop layout without changing it. Screen only, so printing is not affected.
+   ===================================================================== */
+
+@media screen and (max-width: 767px) {
+
+    /* ---------- Top green bar: phone + email on one centred line, address hidden ---------- */
+    .top-green-bar .container-fluid { padding-left: 12px !important; padding-right: 12px !important; }
+    .top-green-bar .container-fluid > div { justify-content: center !important; flex-wrap: wrap; column-gap: 14px; row-gap: 2px; }
+    .top-green-bar .top-bar-item { margin-left: 0; font-size: .74rem; white-space: nowrap; }
+    .top-green-bar .top-bar-item:first-child { display: none; }
+
+    /* ---------- Main navbar: tighter padding, slightly smaller logo ---------- */
+    .main-nav-bar .container-fluid { padding-left: 14px !important; padding-right: 14px !important; }
+    .main-nav-bar .navbar-brand img { height: 36px; }
+
+    /* ---------- Image cards (home, products, services): side gutters so they don't touch the screen edge ---------- */
+    .section-card, .section-card-allubot { margin-left: 14px; margin-right: 14px; width: auto; }
+    .section-card { min-height: 0; }
+    .section-card::before { background: linear-gradient(to bottom, rgba(0,0,0,.55) 0%, rgba(0,0,0,.8) 100%); }
+
+    /* ---------- Meet AlluBot: text first, robot below it (instead of on top of the text) ---------- */
+    .section-card-allubot { padding: 0; }
+    .section-card-allubot .p-5 { padding: 28px 24px 8px !important; }
+    .meet-allubot-img { position: static; padding: 0 0 18px !important; }
+    .meet-allubot-img img { width: 150px; }
+
+    /* ---------- Home "Imaging & Radiology Systems": swipeable row instead of arrow buttons ---------- */
+    .carousel-wrapper { padding-left: 0; padding-right: 0; }
+    .cards-scroll-container {
+        overflow-x: auto !important; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        justify-content: flex-start !important; padding: 6px 16px 14px; scroll-padding-left: 16px; scrollbar-width: none;
+    }
+    .cards-scroll-container::-webkit-scrollbar { display: none; }
+    .modality-card { width: 150px !important; height: 180px !important; padding: 18px 12px; scroll-snap-align: start; }
+    .modality-card:hover { transform: none; }
+    .modality-title { font-size: 1.05rem; }
+    .carousel-btn { display: none !important; }
+
+    /* ---------- Product category cards: no empty space under the text ---------- */
+    .category-card { height: auto; min-height: 0; padding: 24px 20px; }
+
+    /* ---------- Product grids (public catalog + admin items): two per row ---------- */
+    .catalog .item-col { flex: 0 0 50%; max-width: 50%; padding-left: 6px; padding-right: 6px; margin-bottom: 12px !important; }
+    .catalog #items-grid-container, .catalog #adm-items-grid { margin-left: -6px; margin-right: -6px; }
+    .item-card { padding: 12px; border-radius: 12px; }
+    .item-card-img-container { height: 110px; margin-bottom: 10px; }
+    .item-card-title { font-size: .84rem; }
+    .item-tile .tile-badges { top: 8px; left: 8px; }
+
+    /* ---------- Contact form: full-width submit button ---------- */
+    #contact-submit-btn { width: 100%; }
+
+    /* ---------- Analytics report on screen: stack the header ---------- */
+    .report-sheet { padding: 18px 16px 14px; }
+    .report-head { flex-direction: column; }
+    .report-head .meta { text-align: left; }
+    .report-grid.kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .report-panel { overflow-x: auto; }
+
+    /* ---------- Tables inside cards scroll sideways instead of squeezing ---------- */
+    .a-card .a-table { min-width: 520px; }
+    .a-card:has(.a-table) { overflow-x: auto; }
+}
+
+/* Very narrow phones (e.g. 360 px): keep the email from wrapping under the phone number awkwardly */
+@media screen and (max-width: 380px) {
+    .top-green-bar .top-bar-item { font-size: .7rem; }
+    .top-green-bar .top-bar-icon { width: 12px; height: 12px; margin-right: 4px; }
+}
