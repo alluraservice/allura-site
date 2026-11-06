@@ -281,7 +281,7 @@ TREE = {
     },
 }
 
-GREETING = ("Hi! I'm AlluBot, Allura's virtual assistant. 👋\n"
+GREETING = ("Hi! I'm AlluBot. 👋\n"
             "Choose a topic below and I'll point you in the right direction.")
 BACK, MENU = "__back", "__menu"
 
@@ -326,7 +326,7 @@ def widget():
             html.Span(html.Img(src=AVATAR, alt=""), className="allubot-head-avatar"),
             html.Div([
                 html.B("AlluBot"),
-                html.Span([html.I(className="allubot-dot"), "Allura's virtual assistant"]),
+                html.Span([html.I(className="allubot-dot"), "Allura's help guide"]),
             ], className="allubot-head-text"),
             html.Button("↺", id="allubot-reset", n_clicks=0, className="allubot-icon-btn", title="Start over"),
             html.Button("×", id="allubot-close", className="allubot-icon-btn", title="Close", **{"aria-label": "Close chat"}),

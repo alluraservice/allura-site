@@ -245,10 +245,10 @@ def layout(*args, **kwargs):
                 dbc.Row([
                     dbc.Col([
                         html.Div([
-                            html.H3("Meet AlluBot! Our AI Chatbot", className="card-title text-white"),
+                            html.H3("Meet AlluBot, your quick guide to Allura", className="card-title text-white"),
                             html.P(
-                                "In case you're not sure what you need, let AlluBot guide you through our solutions "
-                                "and instantly match your hospital with the right support.",
+                                "Not sure where to start? Pick a topic and AlluBot will point you to the right "
+                                "products, services or person to talk to.",
                                 className="card-text text-white"
                             ),
                             html.Button([ui.icon_img("/assets/icons/allubot1.svg", class_name="btn-ico"), "Chat with AlluBot"],
