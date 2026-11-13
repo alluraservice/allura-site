@@ -7,7 +7,7 @@ from dash import Input, Output, State, callback, dcc, html
 from app import app
 
 ADMIN_LINKS = [('Home', '/admin/dashboard'), ('Inquiries', '/admin/inquiries'), ('Items', '/admin/items'),
-               ('Accounts', '/admin/accounts'), ('Reports & Analytics', '/admin/analytics')]
+               ('Website', '/admin/website'), ('Accounts', '/admin/accounts'), ('Reports & Analytics', '/admin/analytics')]
 
 # --- ADMIN NAVBAR COMPONENT ---
 admin_navbar = [

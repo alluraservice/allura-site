@@ -858,6 +858,11 @@ def delete_image_if_unused(image_url):
         return
     in_use = _run("SELECT COUNT(*) FROM items WHERE TRIM(LEADING '/' FROM image_url) = %s;",
                   [f"media/{mid}"], fetch='scalar')
+    # Photos used on the website pages (Admin › Website Content) are kept too
+    if not in_use:
+        in_use = _run("""SELECT (SELECT COUNT(*) FROM site_content WHERE value::text LIKE %s)
+                              + (SELECT COUNT(*) FROM site_content_history WHERE value::text LIKE %s);""",
+                      [f'%"/media/{mid}"%', f'%"/media/{mid}"%'], fetch='scalar')
     if not in_use:
         _run("DELETE FROM uploaded_images WHERE id = %s;", [mid], fetch='none', commit=True)
 

@@ -10,6 +10,7 @@ and in their acknowledgement email, and that the admin sees in the inbox and in 
 """
 import re
 
+from utils.site_content import settings as site_settings
 from dash import html
 
 from database.db_handler import create_inquiry
@@ -46,7 +47,7 @@ def submit_inquiry(source, customer, address, person, dept, phone, email, inquir
                            source=source, source_detail=source_detail)
     if not saved:
         return False, html.Div("Sorry, we couldn't send your inquiry right now. Please try again, or call us at "
-                               "+63 917 770 1820.", className="a-alert a-alert-err"), None
+                               f"{site_settings()['phone']}.", className="a-alert a-alert-err"), None
 
     ref = saved.get('reference_no') or f"#{saved.get('id')}"
     sent, _ = send_inquiry_acknowledgement(email, person, ref, source, inquiry)

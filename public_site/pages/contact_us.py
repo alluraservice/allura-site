@@ -5,14 +5,9 @@ import dash_bootstrap_components as dbc
 import site_ui as ui
 from database.db_handler import SOURCE_CONTACT
 from inquiry_forms import submit_inquiry
+from utils.site_content import settings as site_settings, tel_href
 
-MAIN_MAP = ("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3880.799757751662!2d123.7385!3d13.1391!2m3!1f0!2f0!3f0"
-            "!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zRGHDusOZIFBheiBTdWJkaXZpc2lvbiwgQ3J1emFkYSwgTGVnYXpwaSBDaXR5"
-            "!5e0!3m2!1sen!2sph!4v1620000000000!5m2!1sen!2sph")
-SATELLITE_MAP = ("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3863.3121542122!2d120.9542!3d14.4445!2m3!1f0!2f0!3f0"
-                 "!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zVmlsbGEgQW5nZWxpYSBQaGFzZSAxLCBNYW1ib2cgNCwgQmFjb29yLCBDYXZpdGU"
-                 "!5e0!3m2!1sen!2sph!4v1620000000000!5m2!1sen!2sph")
-
+# Offices, phone, email, maps and social links come from Admin › Website Content › Site settings
 FIELD_IDS = ['contact-customer-name', 'contact-office-address', 'contact-person', 'contact-department-title',
              'contact-no', 'contact-email', 'contact-machine-inquiry', 'contact-remarks']
 
@@ -29,6 +24,7 @@ def _info(icon, key, value):
 
 
 def layout(*args, **kwargs):
+    s = site_settings()
     form_card = html.Div([
         html.Div(html.H6("Inquiry form"), className="a-card-head"),
         html.Div([
@@ -52,15 +48,15 @@ def layout(*args, **kwargs):
     info_card = html.Div([
         html.Div(html.H6("Contact info"), className="a-card-head"),
         html.Div([
-            _info("office.svg", "Main office", "Doña Paz Village, Cruzada, Legazpi City"),
-            _info("satellite.svg", "Satellite office", "Villa Angelina Phase 1, Mambog 4, Bacoor Cavite"),
-            _info("call.svg", "Contact no.", html.A("+63 917 770 1820", href="tel:+639177701820")),
-            _info("email.svg", "Email", html.A("info@alluraenterpriseph.com", href="mailto:info@alluraenterpriseph.com")),
+            _info("office.svg", "Main office", s['main_office']),
+            _info("satellite.svg", "Satellite office", s['satellite_office']) if s['satellite_office'] else None,
+            _info("call.svg", "Contact no.", html.A(s['phone'], href=tel_href(s['phone']))),
+            _info("email.svg", "Email", html.A(s['email'], href=f"mailto:{s['email']}")),
             html.Div([
                 html.Div("Follow us", className="a-section-title mt-3"),
                 html.Div([
-                    html.A(html.Img(src='/assets/icons/facebook.svg'), href="https://www.facebook.com/profile.php?id=61589813960476", target="_blank", rel="noopener noreferrer", title="Facebook"),
-                    html.A(html.Img(src='/assets/icons/linkedin.svg'), href="https://www.linkedin.com/company/allura-enterprise/", target="_blank", rel="noopener noreferrer", title="LinkedIn"),
+                    html.A(html.Img(src='/assets/icons/facebook.svg'), href=s['facebook_url'], target="_blank", rel="noopener noreferrer", title="Facebook"),
+                    html.A(html.Img(src='/assets/icons/linkedin.svg'), href=s['linkedin_url'], target="_blank", rel="noopener noreferrer", title="LinkedIn"),
                 ], className="social-row"),
             ]),
         ], className="a-card-body"),
@@ -83,8 +79,9 @@ def layout(*args, **kwargs):
             html.Div([
                 ui.section_head("Visit us", "Our offices"),
                 html.Div([
-                    map_card("Main office · Legazpi City", MAIN_MAP),
-                    map_card("Satellite office · Bacoor, Cavite", SATELLITE_MAP),
+                    map_card(f"Main office · {s['main_office_label']}", s['main_map_url']) if s['main_map_url'] else None,
+                    map_card(f"Satellite office · {s['satellite_office_label']}", s['satellite_map_url'])
+                    if s['satellite_office'] and s['satellite_map_url'] else None,
                 ], className="map-grid"),
             ], className="site-section"),
         ], className="site-container"),

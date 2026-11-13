@@ -5,37 +5,11 @@ import dash_bootstrap_components as dbc
 import site_ui as ui
 from database.db_handler import SOURCE_SERVICE
 from inquiry_forms import submit_inquiry
+from utils.site_content import get_content, lines
 
-SERVICE_AREAS = [
-    {
-        "title": "Medical Equipment Services",
-        "icon": "equipment_services.svg",
-        "image": "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp",
-        "text": "Installation and lifecycle care for imaging and clinical equipment, handled by trained engineers.",
-        "points": ["Installation & commissioning", "Preventive maintenance programs", "Calibration & repairs"],
-    },
-    {
-        "title": "Electrical Services",
-        "icon": "electrical_services.svg",
-        "image": "/assets/pictures/services/electrical_services/electrical_service_cover.webp",
-        "text": "Facility electrical work planned around the needs of sensitive diagnostic and clinical areas.",
-        "points": ["Site preparation for new equipment", "Power distribution works", "Room shielding support"],
-    },
-    {
-        "title": "Power Supply Services",
-        "icon": "power_supply_services.svg",
-        "image": "/assets/pictures/services/power_supply_services/power_supply_service_cover.jpg",
-        "text": "Medical-grade power protection so CT, MRI and other critical systems stay online.",
-        "points": ["Medical-grade UPS systems", "Voltage stabilization", "UPS maintenance & battery care"],
-    },
-]
-
-STEPS = [
-    ("Send a service inquiry", "Tell us about your facility, the equipment involved, and what you need, using the form on this page."),
-    ("Technical assessment", "Our engineers review the request and, where needed, visit the site to check the equipment and conditions."),
-    ("Proposal & schedule", "You receive a clear scope and quotation, then we agree on a schedule that works around your operations."),
-    ("Service & handover", "The work is carried out and documented, with follow-up support and maintenance plans if you need them."),
-]
+# Text and the three service-area photos come from Admin › Website Content › Services
+# (defaults in utils/site_content.py). The icons stay fixed, in this order.
+AREA_ICONS = ["equipment_services.svg", "electrical_services.svg", "power_supply_services.svg"]
 
 FIELD_IDS = ['service-inquiry-customer', 'service-inquiry-address', 'service-inquiry-person', 'service-inquiry-dept',
              'service-inquiry-phone', 'service-inquiry-email', 'service-inquiry-details', 'service-inquiry-remarks']
@@ -50,9 +24,13 @@ def _field(label, component, full=False):
 
 
 def layout(*args, **kwargs):
+    c = get_content('services')
+    areas_data = [dict(a, icon=AREA_ICONS[i % len(AREA_ICONS)]) for i, a in enumerate(c['areas'])]
+    banner_img = (areas_data[0].get('photo') if areas_data else None) or \
+        "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp"
     header = ui.page_header(
         "Services",
-        "Installation, maintenance, and the electrical and power systems behind your equipment.",
+        c['header_lead'],
         crumbs=[("Home", "/home"), ("Services", None)],
     )
 
@@ -61,49 +39,41 @@ def layout(*args, **kwargs):
         html.Div(id='service-inquiry-toast'),
         html.Div([
             html.Div([
-                html.H3("Complete Healthcare Infrastructure & Equipment Solutions", className="card-title"),
-                html.P(
-                    "From medical equipment installation to specialized electrical and uninterrupted power supply systems, "
-                    "we deliver end-to-end technical support to keep your facility operational, safe, and efficient.",
-                    className="card-text"
-                ),
+                html.H3(c['banner_title'], className="card-title"),
+                html.P(c['banner_text'], className="card-text"),
                 html.Button([ui.icon_img("/assets/icons/service_icon.svg", class_name="btn-ico"), "Service Inquiry"],
                             id="btn-open-service-modal", n_clicks=0, className="btn-white"),
             ], className="section-card-content")
         ], className="section-card", style={
-            "backgroundImage": "linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), "
-                               "url('/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp')",
+            "backgroundImage": f"linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{banner_img}')",
             "maxWidth": "none", "margin": "0"}),
     ])
 
     # 2. What we service
     areas = html.Div([
         ui.section_head(
-            "What we service",
-            "One team for your equipment and the facility around it",
-            "Allura supplies medical equipment and services it too. The same engineers who know the machines also handle "
-            "the power and electrical work they depend on, so you deal with a single accountable partner.",
+            "What we service", c['areas_title'], c['areas_text'],
         ),
         html.Div([
             html.Div([
-                html.Div(className="img", style={"backgroundImage": f"url('{a['image']}')"}),
+                html.Div(className="img", style={"backgroundImage": f"url('{a.get('photo')}')"}),
                 html.Div([
                     html.Span(ui.icon_img(f"/assets/icons/{a['icon']}"), className="feature-icon"),
                     html.H4(a["title"]),
                     html.P(a["text"]),
-                    html.Ul([html.Li(p) for p in a["points"]], className="tick-list"),
+                    html.Ul([html.Li(p) for p in lines(a.get("points"))], className="tick-list"),
                 ], className="body"),
             ], className="a-card feature-card")
-            for a in SERVICE_AREAS
+            for a in areas_data
         ], className="feature-grid"),
     ], className="site-section")
 
     # 3. How service works
     steps = html.Div([
-        ui.section_head("How it works", "From request to handover in four steps"),
+        ui.section_head("How it works", c['steps_title']),
         html.Div([
-            html.Div([html.Span(str(i), className="num"), html.H5(title), html.P(text)], className="step")
-            for i, (title, text) in enumerate(STEPS, start=1)
+            html.Div([html.Span(str(i), className="num"), html.H5(st.get('title')), html.P(st.get('text'))], className="step")
+            for i, st in enumerate(c['steps'], start=1)
         ], className="a-card steps"),
     ], className="site-section")
 
@@ -112,9 +82,8 @@ def layout(*args, **kwargs):
         html.Div([
             html.Div([
                 html.P("Sales & service", className="site-eyebrow", style={"color": "rgba(255,255,255,.75)"}),
-                html.H3("A partner before, during, and after the purchase"),
-                html.P("Buy the equipment and keep it running with the same company. Tell us what you need and our team "
-                       "will get back to you with the right engineer."),
+                html.H3(c['lifecycle_title']),
+                html.P(c['lifecycle_text']),
                 html.Div([
                     html.Button("Request a Service", id="btn-open-service-modal-2", n_clicks=0,
                                 className="a-btn a-btn-white a-btn-lg"),

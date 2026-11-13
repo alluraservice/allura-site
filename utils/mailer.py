@@ -66,6 +66,16 @@ def site_url(fallback=None):
     return url.rstrip('/')
 
 
+def _contact_line():
+    """Email and phone from Admin › Website Content › Site settings."""
+    try:
+        from utils.site_content import settings
+        s = settings()
+        return f"{s['email']} · {s['phone']}"
+    except Exception:
+        return "info@alluraenterpriseph.com · +63 917 770 1820"
+
+
 def _branded_html(title, body_html, footer_note="This message was sent by Allura Enterprise."):
     return f"""<!doctype html>
 <html><body style="margin:0;padding:0;background:#f4f6f1;font-family:Arial,Helvetica,sans-serif;color:{BRAND_DARK};">
@@ -78,7 +88,7 @@ def _branded_html(title, body_html, footer_note="This message was sent by Allura
           <div style="font-size:15px;line-height:1.6;color:#2b3a2b;">{body_html}</div>
         </td></tr>
         <tr><td style="background:{BRAND_LIGHT};padding:14px 28px;font-size:12px;color:#5b6b5b;">
-          {_html.escape(footer_note)}<br>info@alluraenterpriseph.com &middot; +63 917 770 1820
+          {_html.escape(footer_note)}<br>{_html.escape(_contact_line())}
         </td></tr>
       </table>
     </td></tr>

@@ -187,6 +187,26 @@ ADMIN_SCHEMA_STEPS = [
         created_at  TIMESTAMP DEFAULT NOW()
     );
     """,
+
+    # ---------- Website Content editor (Admin › Website Content, utils/site_content.py) ----------
+    # One row per section (settings, home, about, services, allubot). A section with no row shows the
+    # original content written in utils/site_content.py, so nothing changes until someone saves.
+    """
+    CREATE TABLE IF NOT EXISTS site_content (
+        key         TEXT PRIMARY KEY,
+        value       JSONB NOT NULL,
+        updated_at  TIMESTAMP DEFAULT NOW(),
+        updated_by  TEXT
+    );
+    CREATE TABLE IF NOT EXISTS site_content_history (
+        id          SERIAL PRIMARY KEY,
+        key         TEXT NOT NULL,
+        value       JSONB NOT NULL,
+        saved_by    TEXT,
+        saved_at    TIMESTAMP DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_site_content_history_key ON site_content_history(key);
+    """,
 ]
 
 

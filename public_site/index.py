@@ -43,6 +43,7 @@ from pages.admin.items import item_details
 from pages.admin.items import add_item
 from pages.admin import accounts
 from pages.admin import my_account
+from pages.admin import website_content
 
 app.layout = html.Div(
     [
@@ -122,6 +123,8 @@ def displaypage(pathname, session_email):
         returnlayout = _render(items)
     elif pathname == '/admin/accounts':
         returnlayout = _render(accounts)
+    elif pathname in ['/admin/website', '/admin/website-content']:
+        returnlayout = _render(website_content)
     elif pathname in ['/admin/my-account', '/admin/my_account']:
         returnlayout = _render(my_account)
     elif pathname == '/admin/items/add':
@@ -142,7 +145,7 @@ def displaypage(pathname, session_email):
 def update_navbar(pathname):
     if pathname and pathname.startswith('/admin'):
         return admin_cm.admin_navbar, None          # no footer on the admin pages
-    return cm.navbar, cm.get_footer()
+    return cm.get_navbar(), cm.get_footer()
 
 
 if __name__ == '__main__':

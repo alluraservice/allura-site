@@ -15,69 +15,19 @@ import dash_bootstrap_components as dbc
 
 import site_ui as ui
 from database.db_handler import get_categories_by_type, get_modalities
+from utils.site_content import get_content, lines, settings as site_settings
 
 dash.register_page(__name__, path='/home')
 
-RECAP = [
-    {
-        "tag": "Equipment",
-        "icon": "product_icon.svg",
-        "title": "Imaging & clinical equipment",
-        "image": "/assets/pictures/products/radiology/radiology_cover.jpg",
-        "text": "Diagnostic imaging and clinical systems for every department, from CT, MRI and ultrasound to X-ray, C-arm and cath lab.",
-        "points": ["Models sourced from trusted global manufacturers", "Configured to your room, volume and budget",
-                   "Formal quotation with lead time and warranty"],
-        "link": ("Browse the catalog", "/products"),
-    },
-    {
-        "tag": "Service",
-        "icon": "service_icon.svg",
-        "title": "Installation & lifecycle care",
-        "image": "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp",
-        "text": "The same team that supplies your equipment installs it and keeps it running afterwards.",
-        "points": ["Installation & commissioning", "Preventive maintenance & calibration", "Repairs by trained engineers"],
-        "link": ("See our services", "/services"),
-    },
-    {
-        "tag": "Consultation",
-        "icon": "contact_us.svg",
-        "title": "Consultation & project planning",
-        "image": "/assets/pictures/intensive_care_unit.jpg",
-        "text": "Not sure yet what your department needs? We help you plan the right equipment, site and budget before you commit.",
-        "points": ["Needs assessment & product recommendations", "Site visit & room planning",
-                   "Proposals for private and government procurement"],
-        "link": ("Talk to our team", "/contact_us"),
-    },
-]
-
-STATS = [
-    ("Since 2014", "10+ years", "working with hospitals"),
-    ("PhilGEPS", "Platinum", "registered supplier"),
-    ("FDA", "LTO", "licensed to operate"),
-    ("Footprint", "Nationwide", "Luzon & Visayas"),
-]
-
-LESSER_KNOWN = [
-    ("We can join public procurement",
-     "Our PhilGEPS Platinum registration and FDA License to Operate mean government hospitals and LGUs can buy "
-     "from us through bidding, with the documents ready when you need them."),
-    ("We prepare the site, not just the machine",
-     "Room assessment, electrical works, power distribution and shielding support are handled by our own team, "
-     "so a new system arrives to a room that is ready for it."),
-    ("Power quality is where we started",
-     "Allura began with UPS solutions for CT systems. That background shapes how we plan every installation "
-     "around stable, protected power."),
-    ("One partner from proposal to after-sales",
-     "Sales, installation and maintenance stay with one accountable team, so you never have to explain your "
-     "setup to a new supplier."),
-]
-
-NEXT_STEPS = [
-    ("Send your request", "Use Contact Sales on a product, the Services form, or Contact Us. You get a reference "
-                          "number right away."),
-    ("We get back to you", "Our team follows up by email or phone, quoting your reference number."),
-    ("Assessment & proposal", "Where needed we visit the site, then send a clear scope, quotation and schedule."),
-    ("Delivery & after-sales", "Installation, handover and maintenance plans, with the same team from start to finish."),
+# Text comes from Admin › Website Content › Home (defaults in utils/site_content.py).
+# The three "What we do" cards keep their icons, photos and links here; only their words are editable.
+RECAP_FIXED = [
+    {"icon": "product_icon.svg", "image": "/assets/pictures/products/radiology/radiology_cover.jpg",
+     "link": ("Browse the catalog", "/products")},
+    {"icon": "service_icon.svg", "image": "/assets/pictures/services/equipment_services/medical_equipment_service_cover.webp",
+     "link": ("See our services", "/services")},
+    {"icon": "contact_us.svg", "image": "/assets/pictures/intensive_care_unit.jpg",
+     "link": ("Talk to our team", "/contact_us")},
 ]
 
 
@@ -119,11 +69,11 @@ def _section_card(title, text, button, image, position="center"):
 
 
 def layout(*args, **kwargs):
+    c = get_content('home')
+    s = site_settings()
+    cards = [dict(RECAP_FIXED[i], **c['recap'][i]) for i in range(min(len(RECAP_FIXED), len(c['recap'])))]
     recap = html.Div([
-        ui.section_head("What we do", "Equipment, service and guidance, from one team",
-                        "Whether you're planning a new department or keeping existing systems running, "
-                        "these are the three ways we support hospitals.",
-                        center=True),
+        ui.section_head("What we do", c['recap_title'], c['recap_text'], center=True),
         html.Div([
             html.Div([
                 html.Div(className="img", style={"backgroundImage": f"url('{r['image']}')"}),
@@ -132,38 +82,36 @@ def layout(*args, **kwargs):
                     html.Span(r["tag"], className="home-tag"),
                     html.H4(r["title"]),
                     html.P(r["text"]),
-                    html.Ul([html.Li(p) for p in r["points"]], className="tick-list"),
+                    html.Ul([html.Li(p) for p in lines(r["points"])], className="tick-list"),
                     html.A(r["link"][0] + "  ›", href=r["link"][1], className="home-card-link"),
                 ], className="body"),
             ], className="a-card feature-card")
-            for r in RECAP
+            for r in cards
         ], className="feature-grid"),
     ], className="home-section")
 
     lesser_known = html.Div([
-        ui.section_head("Why Allura", "Why hospitals work with us",
-                        "Credentials and capabilities that make a difference once equipment is on site.",
-                        center=True),
+        ui.section_head("Why Allura", c['why_title'], c['why_text'], center=True),
         html.Div([
-            html.Div([html.Div(k, className="k"), html.Div(v, className="v"), html.Div(s, className="s")], className="stat")
-            for k, v, s in STATS
+            html.Div([html.Div(x.get('k'), className="k"), html.Div(x.get('v'), className="v"),
+                      html.Div(x.get('s'), className="s")], className="stat")
+            for x in c['stats']
         ], className="stat-row mb-3"),
         html.Div([
             html.Div([
                 html.Span(str(i), className="num"),
-                html.Div([html.B(title), html.P(text)]),
+                html.Div([html.B(w.get('title')), html.P(w.get('text'))]),
             ], className="know-item")
-            for i, (title, text) in enumerate(LESSER_KNOWN, start=1)
+            for i, w in enumerate(c['why'], start=1)
         ], className="a-card know-grid"),
         html.Div(html.A("Read our story", href="/about_us", className="a-btn a-btn-outline"), className="text-center mt-3"),
     ], className="home-section")
 
     next_steps = html.Div([
-        ui.section_head("Getting started", "How working with us works",
-                        "Four simple steps, whether it's your first inquiry or your next project.", center=True),
+        ui.section_head("Getting started", c['steps_title'], c['steps_text'], center=True),
         html.Div([
-            html.Div([html.Span(str(i), className="num"), html.H5(title), html.P(text)], className="step")
-            for i, (title, text) in enumerate(NEXT_STEPS, start=1)
+            html.Div([html.Span(str(i), className="num"), html.H5(st.get('title')), html.P(st.get('text'))], className="step")
+            for i, st in enumerate(c['steps'], start=1)
         ], className="a-card steps"),
     ], className="home-section")
 
@@ -172,10 +120,9 @@ def layout(*args, **kwargs):
         # 1. Hero
         html.Div([
             html.Div([
-                html.Div("Allura Enterprise", className="hero-subtitle"),
-                html.H1("Your Trusted Partner in Advanced Healthcare Solutions.", className="hero-title"),
-                html.P("Medical equipment, installation and lifecycle support for Philippine hospitals, "
-                       "from one accountable team.", className="hero-lead"),
+                html.Div(c['hero_eyebrow'], className="hero-subtitle"),
+                html.H1(c['hero_title'], className="hero-title"),
+                html.P(c['hero_lead'], className="hero-lead"),
                 html.Div([
                     html.A("Browse our catalog", href="/products", className="btn-white"),
                     html.A("Talk to our team", href="/contact_us", className="a-btn a-btn-light a-btn-lg"),
@@ -185,11 +132,7 @@ def layout(*args, **kwargs):
 
         # 1b. Introduction
         html.Div(ui.section_head(
-            "About Allura",
-            "A healthcare technology partner for Philippine hospitals",
-            "Since 2014, Allura Enterprise has supplied, installed and maintained medical equipment for public and private "
-            "hospitals. Whether we've worked together before or you're just getting to know us, here's how we can help.",
-            center=True), className="home-section home-intro"),
+            "About Allura", c['intro_title'], c['intro_text'], center=True), className="home-section home-intro"),
 
         # 2. What we do
         recap,
@@ -197,10 +140,7 @@ def layout(*args, **kwargs):
         # 3. Imaging & radiology
         html.Div([
             ui.section_head(
-                "Featured", "Imaging & Radiology Systems",
-                "Backed by deep technical expertise and a consultative approach, our imaging and radiology portfolio "
-                "delivers precision, reliability, and end-to-end support for modern healthcare institutions.",
-                center=True),
+                "Featured", c['featured_title'], c['featured_text'], center=True),
             html.Div([
                 html.Button("‹", className="carousel-btn carousel-btn-left hidden"),
                 html.Div(_modality_cards(), className="cards-scroll-container d-flex gap-3 overflow-hidden"),
@@ -216,9 +156,8 @@ def layout(*args, **kwargs):
 
         # 6. Contact
         _section_card(
-            "Let's Discuss Your Institution's Next Project",
-            "Whether you need a product proposal, equipment demonstration, or technical consultation, "
-            "our team is ready to assist you.",
+            c['contact_title'],
+            c['contact_text'],
             html.A([ui.icon_img("/assets/icons/contact_us.svg", class_name="btn-ico"), "Connect with Us"],
                    href="/contact_us", className="btn-white"),
             "/assets/pictures/home/home_contact_card.jpg",   # cropped from home_photo_1.jpeg (no logos)
@@ -227,12 +166,12 @@ def layout(*args, **kwargs):
 
         # 7. Follow us
         _section_card(
-            "Stay Connected With Allura",
-            "Follow our journey, catch our latest industry updates, and connect with our team on social media.",
+            c['follow_title'],
+            c['follow_text'],
             html.Div([
-                html.A(html.Img(src='/assets/icons/facebook.svg', alt="Facebook"), href="https://www.facebook.com/profile.php?id=61589813960476", rel="noopener noreferrer",
+                html.A(html.Img(src='/assets/icons/facebook.svg', alt="Facebook"), href=s['facebook_url'], rel="noopener noreferrer",
                        target="_blank", title="Facebook", className="social-btn"),
-                html.A(html.Img(src='/assets/icons/linkedin.svg', alt="LinkedIn"), href="https://www.linkedin.com/company/allura-enterprise/", rel="noopener noreferrer",
+                html.A(html.Img(src='/assets/icons/linkedin.svg', alt="LinkedIn"), href=s['linkedin_url'], rel="noopener noreferrer",
                        target="_blank", title="LinkedIn", className="social-btn"),
             ], className="d-flex align-items-center gap-3 mt-3"),
             "/assets/pictures/home/home_follow_card.jpg",    # cropped from home_photo_2.jpeg (no logos)
@@ -245,12 +184,8 @@ def layout(*args, **kwargs):
                 dbc.Row([
                     dbc.Col([
                         html.Div([
-                            html.H3("Meet AlluBot, your quick guide to Allura", className="card-title text-white"),
-                            html.P(
-                                "Not sure where to start? Pick a topic and AlluBot will point you to the right "
-                                "products, services or person to talk to.",
-                                className="card-text text-white"
-                            ),
+                            html.H3(c['allubot_title'], className="card-title text-white"),
+                            html.P(c['allubot_text'], className="card-text text-white"),
                             html.Button([ui.icon_img("/assets/icons/allubot1.svg", class_name="btn-ico"), "Chat with AlluBot"],
                                         id="home_open_chatbot_btn",
                                         className="btn-white mt-3 d-inline-flex align-items-center")

@@ -39,6 +39,7 @@ from database.db_handler import (INQUIRY_LABELS, INQUIRY_PRIORITIES, INQUIRY_SOU
                                  get_inquiry_folder_counts, get_inquiry_messages, search_inquiries,
                                  update_inquiry_fields)
 from utils.mailer import send_inquiry_reply
+from utils.site_content import fill
 
 dash.register_page(__name__, path='/admin/inquiries')
 
@@ -52,7 +53,8 @@ FOLDERS_OTHER = [('archived', 'Archived', '▤')]
 FOLDER_TITLES = {f: t for f, t, _ in FOLDERS_MAIN + FOLDERS_SOURCE + FOLDERS_STATUS + FOLDERS_OTHER}
 FOLDER_TITLES.update({f'source:{s}': f"From the {s}" if s != 'Contact Us' else "From Contact Us" for s in INQUIRY_SOURCES})
 
-SIGNATURE_TAIL = "Allura Enterprise\ninfo@alluraenterpriseph.com  |  +63 917 770 1820"
+# Signature and phone number come from Admin › Website Content › Site settings ({company}, {email}, {phone})
+SIGNATURE_TAIL = "{company}\n{email}  |  {phone}"
 TEMPLATES = {
     'ack': ("Acknowledge receipt",
             "Dear {contact},\n\nThank you for reaching out to Allura Enterprise regarding {topic} (reference no. {ref}). "
@@ -73,7 +75,7 @@ TEMPLATES = {
     'service': ("Service request received",
                 "Dear {contact},\n\nWe have logged your service request regarding {topic} under reference no. {ref}. "
                 "Our field engineer will contact you to confirm the visit schedule. For urgent concerns, call us at "
-                "+63 917 770 1820 and mention your reference number."),
+                "{phone} and mention your reference number."),
     'close': ("Close the inquiry",
               "Dear {contact},\n\nThank you again for considering Allura Enterprise. We're marking inquiry {ref} as "
               "resolved, but please don't hesitate to reply to this email if you need anything else."),
@@ -831,12 +833,12 @@ def apply_template(key, active_id, s_name, s_email):
         raise dash.exceptions.PreventUpdate
     iq = get_inquiry_detail(active_id) or {}
     me = _me(s_email) or {}
-    text = TEMPLATES[key][1].format(contact=iq.get('contact_person') or iq.get('customer_name') or 'Sir/Madam',
+    text = fill(TEMPLATES[key][1]).format(contact=iq.get('contact_person') or iq.get('customer_name') or 'Sir/Madam',
                                     customer=iq.get('customer_name') or 'your facility',
                                     topic=_topic(iq), ref=iq.get('reference_no') or '')
     agent = me.get('name') or s_name or 'The Allura Team'
     role = f"{me['role']}\n" if me.get('role') else ""
-    text += f"\n\nBest regards,\n{agent}\n{role}{SIGNATURE_TAIL}"
+    text += f"\n\nBest regards,\n{agent}\n{role}{fill(SIGNATURE_TAIL)}"
     return text, ANY
 
 

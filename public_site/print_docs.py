@@ -16,14 +16,18 @@ from datetime import date, datetime
 from html import escape
 
 from app import app
+from utils.site_content import settings as site_settings
 
-COMPANY = {
-    'name': 'Allura Enterprise',
-    'address': 'Doña Paz Village, Cruzada, Legazpi City',
-    'phone': '+63 917 770 1820',
-    'email': 'info@alluraenterpriseph.com',
-    'web': 'alluraenterpriseph.com',
-}
+
+class _Company:
+    """Letterhead details, read from Admin › Website Content › Site settings each time a document is printed."""
+    _KEYS = {'name': 'company_name', 'address': 'main_office', 'phone': 'phone', 'email': 'email', 'web': 'website'}
+
+    def __getitem__(self, key):
+        return site_settings().get(self._KEYS[key], '')
+
+
+COMPANY = _Company()
 VAT_RATE = 0.12
 VAT_MODES = {
     'incl': 'Prices are VAT inclusive (12%)',

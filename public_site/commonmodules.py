@@ -1,4 +1,6 @@
 """Public navbar (with the Login / Forgot password pop-up) and the site footer."""
+from datetime import datetime
+
 import dash
 import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, ctx, dcc, html, no_update
@@ -7,6 +9,7 @@ from app import app
 from database.db_handler import authenticate, create_password_reset, find_account_for_recovery
 from utils.mailer import send_password_reset_link, site_url
 from utils.security import new_reset_token
+from utils.site_content import settings as site_settings
 
 RESET_MINUTES = 60
 NAV_LINKS = [('Home', '/home'), ('About Us', '/about_us'), ('Products', '/products'),
@@ -18,22 +21,29 @@ def _label(text):
 
 
 # --- NAVBAR COMPONENT ---
-navbar = [
-    # 1. TOP GREEN BAR (scrolls away normally)
-    html.Div(
+# The top green bar shows the contact details saved in Admin › Website Content › Site settings,
+# so the navbar is built per page view (get_navbar) instead of once at start-up.
+def _top_bar():
+    s = site_settings()
+    return html.Div(
         dbc.Container(
             html.Div([
                 html.Span([html.Img(src=app.get_asset_url('icons/office.svg'), className='top-bar-icon'),
-                           "BGC, Taguig City, Philippines"], className='top-bar-item'),
+                           s['location_short']], className='top-bar-item'),
                 html.Span([html.Img(src=app.get_asset_url('icons/call.svg'), className='top-bar-icon'),
-                           "+63 917 770 1820"], className='top-bar-item'),
+                           s['phone']], className='top-bar-item'),
                 html.Span([html.Img(src=app.get_asset_url('icons/email.svg'), className='top-bar-icon'),
-                           "info@alluraenterpriseph.com"], className='top-bar-item'),
+                           s['email']], className='top-bar-item'),
             ], className='d-flex justify-content-end align-items-center w-100'),
             fluid=True, className='px-5'
         ),
         className='top-green-bar py-1'
-    ),
+    )
+
+
+navbar = [
+    # 1. TOP GREEN BAR (scrolls away normally; filled in by get_navbar)
+    html.Div(id='top-bar-slot'),
 
     # 2. MAIN NAVIGATION BAR (sticky)
     html.Header(
@@ -106,6 +116,11 @@ navbar = [
 
     dcc.Location(id='login-redirect', refresh=True),
 ]
+
+
+def get_navbar():
+    """The public navbar with the current contact details in the top green bar."""
+    return [_top_bar()] + navbar[1:]
 
 
 # ==========================================
@@ -204,13 +219,13 @@ def send_recovery(_clicks, _enter, email):
 
 # --- FOOTER COMPONENT ---
 def get_footer():
+    s = site_settings()
     return html.Footer(
         html.Div([
             html.Div([
                 html.Div([
                     html.Img(src=app.get_asset_url('logos/alluralogo1.png'), alt='Allura Enterprise Logo', className='footer-logo mb-3'),
-                    html.P("Allura Enterprise is a premier Philippine medical equipment distributor and service provider, "
-                           "delivering reliable radiology, imaging, and hospital infrastructure solutions nationwide.",
+                    html.P(s['footer_text'],
                            className='small text-muted pe-lg-4', style={'lineHeight': '1.6', 'maxWidth': '300px'}),
                 ], className='col-lg-4 col-md-12 mb-4 mb-lg-0'),
                 html.Div([
@@ -227,16 +242,16 @@ def get_footer():
                     html.H6("Get in Touch", className="fw-bold mb-3"),
                     html.Div([
                         html.Div([html.Img(src=app.get_asset_url('icons/call.svg'), className='me-2 footer-icon', style={'width': '16px'}),
-                                  html.Span("+63 917 770 1820", className="small")], className="footer-contact-item"),
+                                  html.Span(s['phone'], className="small")], className="footer-contact-item"),
                         html.Div([html.Img(src=app.get_asset_url('icons/email.svg'), className='me-2 footer-icon', style={'width': '16px'}),
-                                  html.A("info@alluraenterpriseph.com", href="mailto:info@alluraenterpriseph.com",
+                                  html.A(s['email'], href=f"mailto:{s['email']}",
                                          className="small text-decoration-none text-reset")], className="footer-contact-item"),
                         html.Div([html.Img(src=app.get_asset_url('icons/office.svg'), className='me-2 footer-icon', style={'width': '16px'}),
-                                  html.Span("BGC, Taguig City, Philippines", className="small")], className="footer-contact-item"),
+                                  html.Span(s['location_short'], className="small")], className="footer-contact-item"),
                     ]),
                 ], className='col-lg-4 col-md-6'),
             ], className='row justify-content-between'),
-            html.Div(html.P("© 2026 Allura Enterprise. All Rights Reserved.", className="text-center small mb-0 opacity-75"),
+            html.Div(html.P(f"© {datetime.now().year} {s['company_name']}. All Rights Reserved.", className="text-center small mb-0 opacity-75"),
                      className="footer-bottom"),
         ], className="container"),
         className="site-footer"

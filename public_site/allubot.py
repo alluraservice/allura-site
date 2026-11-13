@@ -12,7 +12,11 @@ How it works
   AlluBot" button on Home (#home_open_chatbot_btn); see assets/allubot.js.
   Styles: assets/css/allubot.css. Hidden automatically on admin pages.
 
-To change what AlluBot says, edit COMPANY and TREE below. Nothing else needs touching.
+Changing what AlluBot says
+- Wording of the greeting, questions and answers: Admin › Website Content › AlluBot (no code needed).
+  Contact details in answers are written as {phone}, {email}, {main_office} and {satellite_office};
+  they are filled in from Admin › Website Content › Site settings.
+- Adding a NEW question or changing which follow-up questions appear: edit TREE below (code).
 Each entry in TREE is one question:
     "key": {
         "label":   text on the button (also shown as the customer's message),
@@ -25,6 +29,7 @@ import dash
 from dash import ALL, Input, Output, State, callback, clientside_callback, ctx, dcc, html
 
 import site_ui as ui
+from utils.site_content import fill, get_content
 
 try:
     from database.db_handler import get_modalities
@@ -37,12 +42,8 @@ AVATAR = "/assets/icons/allubot1.svg"   # white icon, tinted dark green by allub
 # =====================================================================
 # 1. COMPANY FACTS — one place to keep AlluBot's details correct
 # =====================================================================
-COMPANY = {
-    "phone": "+63 917 770 1820",
-    "email": "info@alluraenterpriseph.com",
-    "main_office": "Doña Paz Village, Cruzada, Legazpi City",
-    "satellite_office": "Villa Angelina Phase 1, Mambog 4, Bacoor, Cavite",
-}
+# Phone, email and offices now come from Admin › Website Content › Site settings (utils/site_content.py).
+# In the answers below they are written as {phone}, {email}, {main_office} and {satellite_office}.
 
 L_PRODUCTS = ("Browse products", "/products")
 L_ALL_PRODUCTS = ("See all products", "/products/all")
@@ -156,7 +157,7 @@ TREE = {
         "label": "My equipment needs repair",
         "answer": "Sorry to hear that. Send a Service Inquiry from our Services page with the equipment model and "
                   "what's happening, and our engineers will assess it.\n\n"
-                  "For urgent breakdowns, it's fastest to also call us at " + COMPANY["phone"] + ".",
+                  "For urgent breakdowns, it's fastest to also call us at {phone}.",
         "links": [L_SERVICES],
         "options": ["svc_how", "svc_pm", "contact"],
     },
@@ -259,8 +260,8 @@ TREE = {
     "contact": {
         "label": "How can I contact your team?",
         "answer": "You can reach us directly:\n"
-                  "• Phone: " + COMPANY["phone"] + "\n"
-                  "• Email: " + COMPANY["email"],
+                  "• Phone: {phone}\n"
+                  "• Email: {email}",
         "links": [L_CONTACT],
         "options": ["contact_form", "contact_offices", "about_coverage"],
     },
@@ -273,8 +274,8 @@ TREE = {
     },
     "contact_offices": {
         "label": "Where are your offices?",
-        "answer": "• Main office: " + COMPANY["main_office"] + "\n"
-                  "• Satellite office: " + COMPANY["satellite_office"] + "\n\n"
+        "answer": "• Main office: {main_office}\n"
+                  "• Satellite office: {satellite_office}\n\n"
                   "Maps for both are on our Contact Us page.",
         "links": [L_CONTACT],
         "options": ["contact", "about_coverage"],
@@ -282,7 +283,20 @@ TREE = {
 }
 
 GREETING = ("Hi! I'm AlluBot. 👋\n"
-            "Choose a topic below and I'll point you in the right direction.")
+            "Choose a topic below and I'll point you in the right direction.")   # default; see Website Content
+
+
+def _text(key):
+    """(label, answer) for a question: the wording saved in Admin › Website Content, else the default above."""
+    node = TREE[key]
+    saved = (get_content('allubot').get('answers') or {}).get(key) or {}
+    label = (saved.get('label') or '').strip() or node['label']
+    answer = (saved.get('answer') or '').strip() or node['answer']
+    return label, fill(answer)
+
+
+def _greeting():
+    return fill((get_content('allubot').get('greeting') or '').strip() or GREETING)
 BACK, MENU = "__back", "__menu"
 
 
@@ -295,7 +309,7 @@ def _bot(text, links=None):
 
 
 def _initial():
-    return {"messages": [_bot(GREETING)], "path": ["main"]}
+    return {"messages": [_bot(_greeting())], "path": ["main"]}
 
 
 def _valid(store):
@@ -321,7 +335,7 @@ def _options_for(key):
 def widget():
     """Add once to app.layout (index.py)."""
     return html.Div([
-        dcc.Store(id="allubot-history", data=_initial(), storage_type="session"),
+        dcc.Store(id="allubot-history", data=None, storage_type="session"),   # filled on first use
         html.Div([
             html.Span(html.Img(src=AVATAR, alt=""), className="allubot-head-avatar"),
             html.Div([
@@ -369,7 +383,7 @@ def render(store):
     current = store["path"][-1] if store["path"][-1] in TREE or store["path"][-1] == "main" else "main"
 
     options = [
-        html.Button([html.Span(TREE[k]["label"]), html.Span("›", className="arrow")],
+        html.Button([html.Span(_text(k)[0]), html.Span("›", className="arrow")],
                     id={"type": "allubot-opt", "key": k}, n_clicks=0, className="allubot-option")
         for k in _options_for(current)
     ]
@@ -415,8 +429,9 @@ def on_choice(_opts, _reset, store):
         links = list(node.get("links", []))
         if node.get("dynamic") == "modalities":
             links = _modality_links() + links
-        messages.append({"role": "user", "text": node["label"]})
-        messages.append(_bot(node["answer"], links))
+        label, answer = _text(key)
+        messages.append({"role": "user", "text": label})
+        messages.append(_bot(answer, links))
         path.append(key)
     else:
         raise dash.exceptions.PreventUpdate

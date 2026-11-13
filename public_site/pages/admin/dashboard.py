@@ -91,6 +91,7 @@ def protect_and_render_dashboard(first_name, session_email):
         html.Div(html.Div([
             _quick('/admin/inquiries', 'icons/inquiries.svg', "Inquiries", f"{counts.get('unread', 0)} unread", 'inquiries-bg'),
             _quick('/admin/items', 'icons/items.svg', "Items", f"{int(items.get('total') or 0)} products", 'items-bg'),
+            _quick('/admin/website', 'icons/website_globe.svg', "Website Content", "Text, contacts & photos", 'website-bg'),
             _quick('/admin/accounts', 'icons/accounts.svg', "Accounts", f"{active_accounts} active", 'accounts-bg'),
             _quick('/admin/analytics', 'icons/analytics.svg', "Reports & Analytics", "Print a one-page report", 'reports-bg'),
         ], className="quick-grid"), className="a-card-body"),
