@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 
 import site_ui as ui
 from database.db_handler import SOURCE_CONTACT
-from inquiry_forms import submit_inquiry
+from inquiry_forms import confirm_window, register_confirm_close, sending_state, submit_inquiry
 from utils.site_content import settings as site_settings, tel_href
 
 # Offices, phone, email, maps and social links come from Admin › Website Content › Site settings
@@ -48,6 +48,7 @@ def layout(*args, **kwargs):
     info_card = html.Div([
         html.Div(html.H6("Contact info"), className="a-card-head"),
         html.Div([
+            _info("office.svg", "Head office", s['head_office']) if s['head_office'] else None,
             _info("office.svg", "Main office", s['main_office']),
             _info("satellite.svg", "Satellite office", s['satellite_office']) if s['satellite_office'] else None,
             _info("call.svg", "Contact no.", html.A(s['phone'], href=tel_href(s['phone']))),
@@ -79,12 +80,15 @@ def layout(*args, **kwargs):
             html.Div([
                 ui.section_head("Visit us", "Our offices"),
                 html.Div([
+                    map_card(f"Head office · {s['head_office_label']}", s['head_map_url'])
+                    if s['head_office'] and s['head_map_url'] else None,
                     map_card(f"Main office · {s['main_office_label']}", s['main_map_url']) if s['main_map_url'] else None,
                     map_card(f"Satellite office · {s['satellite_office_label']}", s['satellite_map_url'])
                     if s['satellite_office'] and s['satellite_map_url'] else None,
                 ], className="map-grid"),
             ], className="site-section"),
         ], className="site-container"),
+        confirm_window('contact'),
     ], className="site-shell")
 
 
@@ -93,15 +97,21 @@ def layout(*args, **kwargs):
 # ==========================================
 @callback(
     Output('contact-feedback', 'children'),
+    Output('contact-done-modal', 'is_open'),
+    Output('contact-done-body', 'children'),
     *[Output(i, 'value') for i in FIELD_IDS],
     Input('contact-submit-btn', 'n_clicks'),
     *[State(i, 'value') for i in FIELD_IDS],
+    running=sending_state('contact-submit-btn'),
     prevent_initial_call=True,
 )
 def submit_contact_inquiry(n, customer, address, person, dept, phone, email, inquiry, remarks):
     if not n:
         raise dash.exceptions.PreventUpdate
-    ok, message, _ref = submit_inquiry(SOURCE_CONTACT, customer, address, person, dept, phone, email, inquiry, remarks)
+    ok, message, _ref, window = submit_inquiry(SOURCE_CONTACT, customer, address, person, dept, phone, email, inquiry, remarks)
     if ok:
-        return (message,) + ('',) * len(FIELD_IDS)       # clear the form
-    return (message,) + (no_update,) * len(FIELD_IDS)
+        return (message, True, window) + ('',) * len(FIELD_IDS)       # clear the form
+    return (message, True, window) + (no_update,) * len(FIELD_IDS)       # keep what they typed
+
+
+register_confirm_close('contact')

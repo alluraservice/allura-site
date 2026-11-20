@@ -105,6 +105,28 @@
 }
 .inquiry-confirm .ref { font-family: Consolas, Menlo, monospace; font-size: 1.05rem; font-weight: 700; color: var(--dark-green); letter-spacing: .04em; }
 
+/* Confirmation window after an inquiry is sent (UAT D-01) */
+.inquiry-done-modal .modal-content { border-radius: 16px; }
+.inquiry-done { padding: 12px 8px 4px; }
+.inquiry-done .done-tick {
+    width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%; background: var(--green); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 700;
+}
+.inquiry-done .done-tick-warn { background: #d97706; }
+.inquiry-done .problem-list {
+    margin: 0; padding: 12px 14px 12px 32px; border-radius: 10px; background: #fff7ed; border: 1px solid #fed7aa;
+    font-size: .95rem;
+}
+.inquiry-done .problem-list li + li { margin-top: 6px; }
+.inquiry-done .done-ref-label { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: #6b7280; }
+.inquiry-done .done-ref {
+    display: inline-block; margin-top: 4px; padding: 8px 18px; border-radius: 10px; background: #eef3e4;
+    font-family: Consolas, Menlo, monospace; font-size: 1.35rem; font-weight: 700; color: var(--dark-green);
+    letter-spacing: .05em; user-select: all;
+}
+.inquiry-done-modal .modal-actions { display: flex; justify-content: center; margin-top: 18px; }
+button[disabled].a-btn, .a-btn:disabled { opacity: .65; cursor: progress; }
+
 /* ---------- Product details (also used by the admin item page) ---------- */
 .detail-bar {
     display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
@@ -184,7 +206,7 @@
     .phase { grid-template-columns: 1fr; gap: 4px; }
 }
 
-/* ---------- Icons inside buttons (Connect with Us, Chat with AlluBot, Service Inquiry, Contact Sales) ---------- */
+/* ---------- Icons inside buttons (Connect with Us, Chat with Allura Bot, Service Inquiry, Contact Sales) ---------- */
 .btn-ico { width: 20px; height: 20px; flex-shrink: 0; filter: brightness(0) saturate(100%) invert(18%) sepia(91%) saturate(2250%) hue-rotate(95deg) brightness(95%) contrast(104%); }
 .btn-ico-white { filter: brightness(0) invert(1); }
 

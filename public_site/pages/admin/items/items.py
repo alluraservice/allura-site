@@ -207,6 +207,7 @@ def render_grid(filter_data, search, visibility, _refresh, button_ids):
     Output('adm-items-refresh', 'data', allow_duplicate=True),
     Output('adm-items-toast', 'children', allow_duplicate=True),
     Output('adm-items-toast', 'is_open', allow_duplicate=True),
+    Output('adm-items-toast', 'className', allow_duplicate=True),
     Input({'type': 'adm-items-toggle', 'index': ALL}, 'n_clicks'),
     State('adm-items-refresh', 'data'),
     prevent_initial_call=True,
@@ -220,7 +221,7 @@ def toggle_visibility(_, refresh):
     now_active = not item.get('is_active', True)
     set_item_active(item['id'], now_active)
     msg = f"“{item['name']}” is {'back on the website' if now_active else 'hidden from the website'}."
-    return (refresh or 0) + 1, msg, True
+    return (refresh or 0) + 1, msg, True, "a-alert a-alert-ok mb-3"
 
 
 # ---------------------------------------------------------------------
@@ -251,6 +252,7 @@ def ask_delete(_, __):
     Output('adm-items-refresh', 'data', allow_duplicate=True),
     Output('adm-items-toast', 'children', allow_duplicate=True),
     Output('adm-items-toast', 'is_open', allow_duplicate=True),
+    Output('adm-items-toast', 'className', allow_duplicate=True),
     Input('adm-items-delete-confirm', 'n_clicks'),
     State('adm-items-delete-id', 'data'),
     State('adm-items-refresh', 'data'),
@@ -259,6 +261,5 @@ def ask_delete(_, __):
 def confirm_delete(n, item_id, refresh):
     if not n or not item_id:
         raise dash.exceptions.PreventUpdate
-    item = get_item_by_id(item_id)
-    delete_item(item_id)
-    return False, (refresh or 0) + 1, f"Deleted “{item['name'] if item else 'item'}”.", True
+    ok, message = delete_item(item_id)
+    return False, (refresh or 0) + 1, message, True, f"a-alert a-alert-{'ok' if ok else 'err'} mb-3"

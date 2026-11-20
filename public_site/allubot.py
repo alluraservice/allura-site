@@ -1,5 +1,5 @@
 """
-AlluBot — Allura's floating help chat (bottom-right corner of the public site).
+Allura Bot — Allura's floating help chat (bottom-right corner of the public site).
 
 How it works
 - Menu-driven: customers pick from questions (no typing). Each answer offers its own
@@ -8,19 +8,19 @@ How it works
 - The "What imaging systems do you carry?" answer lists the live modalities from the
   database as links, so it stays in sync with the catalog.
 - Chat history is kept for the browser tab, so it survives moving between pages.
-- Opened by the AlluBot icon in the navbar (#open_allubot_btn) and the "Chat with
-  AlluBot" button on Home (#home_open_chatbot_btn); see assets/allubot.js.
+- Opened by the Allura Bot icon in the navbar (#open_allubot_btn) and the "Chat with
+  Allura Bot" button on Home (#home_open_chatbot_btn); see assets/allubot.js.
   Styles: assets/css/allubot.css. Hidden automatically on admin pages.
 
-Changing what AlluBot says
-- Wording of the greeting, questions and answers: Admin › Website Content › AlluBot (no code needed).
-  Contact details in answers are written as {phone}, {email}, {main_office} and {satellite_office};
+Changing what Allura Bot says
+- Wording of the greeting, questions and answers: Admin › Website Content › Allura Bot (no code needed).
+  Contact details in answers are written as {phone}, {email}, {head_office}, {main_office} and {satellite_office};
   they are filled in from Admin › Website Content › Site settings.
 - Adding a NEW question or changing which follow-up questions appear: edit TREE below (code).
 Each entry in TREE is one question:
     "key": {
         "label":   text on the button (also shown as the customer's message),
-        "answer":  AlluBot's reply,
+        "answer":  Allura Bot's reply,
         "links":   buttons under the reply, as (text, page) pairs,
         "options": keys of the follow-up questions offered next,
     }
@@ -40,10 +40,10 @@ AVATAR = "/assets/icons/allubot1.svg"   # white icon, tinted dark green by allub
 
 
 # =====================================================================
-# 1. COMPANY FACTS — one place to keep AlluBot's details correct
+# 1. COMPANY FACTS — one place to keep Allura Bot's details correct
 # =====================================================================
 # Phone, email and offices now come from Admin › Website Content › Site settings (utils/site_content.py).
-# In the answers below they are written as {phone}, {email}, {main_office} and {satellite_office}.
+# In the answers below they are written as {phone}, {email}, {head_office}, {main_office} and {satellite_office}.
 
 L_PRODUCTS = ("Browse products", "/products")
 L_ALL_PRODUCTS = ("See all products", "/products/all")
@@ -274,15 +274,16 @@ TREE = {
     },
     "contact_offices": {
         "label": "Where are your offices?",
-        "answer": "• Main office: {main_office}\n"
+        "answer": "• Head office: {head_office}\n"
+                  "• Main office: {main_office}\n"
                   "• Satellite office: {satellite_office}\n\n"
-                  "Maps for both are on our Contact Us page.",
+                  "Maps are on our Contact Us page.",
         "links": [L_CONTACT],
         "options": ["contact", "about_coverage"],
     },
 }
 
-GREETING = ("Hi! I'm AlluBot. 👋\n"
+GREETING = ("Hi! I'm Allura Bot. 👋\n"
             "Choose a topic below and I'll point you in the right direction.")   # default; see Website Content
 
 
@@ -321,7 +322,7 @@ def _modality_links():
         mods = (get_modalities() or []) if get_modalities else []
         return [(m["name"], ui.catalog_href("modality", m["id"])) for m in mods if m.get("name")]
     except Exception as e:
-        print(f"AlluBot modality lookup failed: {e}")
+        print(f"Allura Bot modality lookup failed: {e}")
         return []
 
 
@@ -339,7 +340,7 @@ def widget():
         html.Div([
             html.Span(html.Img(src=AVATAR, alt=""), className="allubot-head-avatar"),
             html.Div([
-                html.B("AlluBot"),
+                html.B("Allura Bot"),
                 html.Span([html.I(className="allubot-dot"), "Allura's help guide"]),
             ], className="allubot-head-text"),
             html.Button("↺", id="allubot-reset", n_clicks=0, className="allubot-icon-btn", title="Start over"),
@@ -350,10 +351,10 @@ def widget():
             html.Div(id="allubot-options", className="allubot-options"),
             html.Div(id="allubot-nav", className="allubot-nav"),
         ], className="allubot-choices"),
-        html.Div("AlluBot gives general information. Our team confirms quotations and bookings.",
+        html.Div("Allura Bot gives general information. Our team confirms quotations and bookings.",
                  className="allubot-foot"),
         html.Div(id="allubot-scroll", style={"display": "none"}),
-    ], id="allubot-panel", className="allubot-panel", role="dialog", **{"aria-label": "AlluBot chat"})
+    ], id="allubot-panel", className="allubot-panel", role="dialog", **{"aria-label": "Allura Bot chat"})
 
 
 def _bubble(msg):

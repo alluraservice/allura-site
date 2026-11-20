@@ -6,7 +6,7 @@ Home - works for everyone: hospitals that already know Allura and those meeting 
   3. Imaging & radiology carousel       (live from the database, one icon per modality)
   4. Why hospitals work with us         (credentials and capabilities)
   5. How working with us works          (how a request is handled, with a reference number)
-  6. Contact, social and AlluBot cards
+  6. Contact, social and Allura Bot cards
 Every section title uses ui.section_head, so headings, subtitles and body text share one type scale (40_site.css).
 """
 import dash
@@ -178,7 +178,7 @@ def layout(*args, **kwargs):
             "center top",
         ),
 
-        # 8. Meet AlluBot
+        # 8. Meet Allura Bot
         html.Div([
             html.Div([
                 dbc.Row([
@@ -186,14 +186,14 @@ def layout(*args, **kwargs):
                         html.Div([
                             html.H3(c['allubot_title'], className="card-title text-white"),
                             html.P(c['allubot_text'], className="card-text text-white"),
-                            html.Button([ui.icon_img("/assets/icons/allubot1.svg", class_name="btn-ico"), "Chat with AlluBot"],
+                            html.Button([ui.icon_img("/assets/icons/allubot1.svg", class_name="btn-ico"), "Chat with Allura Bot"],
                                         id="home_open_chatbot_btn",
                                         className="btn-white mt-3 d-inline-flex align-items-center")
                         ], className="p-5 d-flex flex-column justify-content-center h-100")
                     ], md=7),
                     dbc.Col([
                         html.Div([
-                            html.Img(src='/assets/icons/allubot2.svg', alt="AlluBot Avatar")
+                            html.Img(src='/assets/icons/allubot2.svg', alt="Allura Bot Avatar")
                         ], className="meet-allubot-img d-flex justify-content-center align-items-center h-100 p-3")
                     ], md=5, className="d-flex align-items-center justify-content-center")
                 ], className="g-0 h-100 align-items-center")

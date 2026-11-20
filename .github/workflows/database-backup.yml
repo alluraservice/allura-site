@@ -1,0 +1,52 @@
+# Weekly encrypted database backup (tracker item C-02, SOP-11 C)
+# Needs two repository secrets (Settings › Secrets and variables › Actions), set by the Render account holder:
+#   ALLURA_DATABASE_URL  – the External Database URL from Render
+#   BACKUP_PASSPHRASE    – a long passphrase, kept in Allura's password manager (needed to restore)
+# The backup is encrypted before upload because this repository is public. It is kept for 90 days under
+# Actions › Database backup › the run › Artifacts. Download it to 06 Codes › Database Backups as well.
+# Restore:  gpg -d allura_db_YYYY-MM-DD.dump.gpg > allura_db.dump  then  pg_restore -d <database> allura_db.dump
+name: Database backup
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"   # every Sunday 18:00 UTC = Monday 02:00 Manila
+  workflow_dispatch: {}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check the secrets are set
+        env:
+          DB: ${{ secrets.ALLURA_DATABASE_URL }}
+          PASS: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          if [ -z "$DB" ] || [ -z "$PASS" ]; then
+            echo "::error::Set ALLURA_DATABASE_URL and BACKUP_PASSPHRASE in the repository secrets first (SOP-11)."
+            exit 1
+          fi
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-common
+          yes "" | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh > /dev/null
+          sudo apt-get install -y -qq postgresql-client-16
+      - name: Dump and encrypt
+        env:
+          DB: ${{ secrets.ALLURA_DATABASE_URL }}
+          PASS: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          name="allura_db_$(date -u +%Y-%m-%d)"
+          pg_dump "$DB" -Fc -f "$name.dump"
+          pg_restore --list "$name.dump" > /dev/null   # the file must be a readable backup
+          ls -la "$name.dump"
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$PASS" --symmetric --cipher-algo AES256 -o "$name.dump.gpg" "$name.dump"
+          rm "$name.dump"
+          echo "NAME=$name" >> "$GITHUB_ENV"
+      - name: Keep the encrypted backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.NAME }}
+          path: ${{ env.NAME }}.dump.gpg
+          retention-days: 90

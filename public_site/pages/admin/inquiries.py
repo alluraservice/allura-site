@@ -129,7 +129,7 @@ def _print_modal():
         id='inq-pr-items',
         columns=[{'name': 'Item / description', 'id': 'item', 'type': 'text'},
                  {'name': 'Qty', 'id': 'qty', 'type': 'numeric'},
-                 {'name': 'Unit price (PHP)', 'id': 'price', 'type': 'numeric',
+                 {'name': 'Unit price (PHP) *', 'id': 'price', 'type': 'numeric',
                   'format': Format(precision=2, scheme=Scheme.fixed, group=Group.yes)}],
         data=[dict(EMPTY_LINE)], editable=True, row_deletable=True,
         style_table={'overflowX': 'auto'},
@@ -138,6 +138,9 @@ def _print_modal():
         style_cell_conditional=[{'if': {'column_id': 'qty'}, 'width': '70px', 'textAlign': 'right'},
                                 {'if': {'column_id': 'price'}, 'width': '160px', 'textAlign': 'right'}],
         style_header={'backgroundColor': 'var(--a-hover)', 'fontWeight': 700, 'color': 'var(--dark-green)'},
+        # A line with a description but no unit price is shaded so it's easy to spot (UAT T5.4)
+        style_data_conditional=[{'if': {'filter_query': '{item} != "" && {price} is blank', 'column_id': 'price'},
+                                 'backgroundColor': '#fdecea', 'border': '1px solid #e0a39b'}],
         css=[{'selector': '.dash-spreadsheet td div', 'rule': 'line-height: 1.35;'},
              {'selector': 'td.cell--selected, td.focused',
               'rule': 'background-color: var(--a-select) !important; border: 1px solid var(--green) !important;'}],
@@ -201,6 +204,14 @@ def _print_modal():
                        ]),
         html.Div([record_opts, quote_opts], className="mt-3"),
         html.Div(id='inq-pr-status', className="mt-2"),
+        # Pop-up for anything missing before printing (UAT T5.4: the note should be in a window)
+        dbc.Modal(dbc.ModalBody([
+            html.Div([html.Span("!", className="warn-badge"), html.H5("Before printing", className="mb-0")],
+                     className="d-flex align-items-center gap-2 mb-2"),
+            html.Div(id='inq-pr-warn-body'),
+            html.Div(html.Button("OK, I'll fix it", id='inq-pr-warn-ok', n_clicks=0, className="a-btn a-btn-primary"),
+                     className="modal-actions"),
+        ]), id='inq-pr-warn', is_open=False, centered=True, size='sm', className="a-modal pr-warn-modal"),
         html.Div([
             html.Button("Cancel", id='inq-pr-cancel', n_clicks=0, className="a-btn a-btn-light"),
             html.Button("Print / Save as PDF", id='inq-pr-go', n_clicks=0, className="a-btn a-btn-primary"),
@@ -1004,8 +1015,20 @@ def quote_total_preview(rows, vat_mode):
 
 
 @callback(
+    Output('inq-pr-warn', 'is_open', allow_duplicate=True),
+    Input('inq-pr-warn-ok', 'n_clicks'),
+    prevent_initial_call=True,
+)
+def close_print_warning(n):
+    if not n:
+        raise dash.exceptions.PreventUpdate
+    return False
+
+
+@callback(
     Output('inq-print-doc', 'data'),
-    Output('inq-pr-status', 'children', allow_duplicate=True),
+    Output('inq-pr-warn-body', 'children'),
+    Output('inq-pr-warn', 'is_open', allow_duplicate=True),
     Output('inq-pr-modal', 'is_open', allow_duplicate=True),
     Output('inq-refresh', 'data', allow_duplicate=True),
     Input('inq-pr-go', 'n_clicks'),
@@ -1035,7 +1058,7 @@ def build_print_doc(n, kind, include, to_block, doc_day, subject, salutation, in
         raise dash.exceptions.PreventUpdate
     iq = get_inquiry_detail(active_id) if active_id else None
     if not iq:
-        return no_update, ui.alert("Open an inquiry first.", 'warn'), no_update, no_update
+        return no_update, "Open an inquiry first.", True, no_update, no_update
     me = _me(s_email) or {}
     author = me.get('name') or s_name or 'Admin'
     nonce = pd.Timestamp.now().value       # so printing the same document twice still triggers the print
@@ -1046,16 +1069,20 @@ def build_print_doc(n, kind, include, to_block, doc_day, subject, salutation, in
             iq, get_inquiry_messages(iq['id']), include_thread='thread' in include,
             include_internal='internal' in include, printed_by=author,
             source_description=SOURCE_DESCRIPTIONS.get(iq.get('source_v')))
-        return {'html': page, 'title': title, 'n': nonce}, None, False, no_update
+        return {'html': page, 'title': title, 'n': nonce}, no_update, no_update, False, no_update
 
     lines = print_docs.quote_lines(rows)
     if not lines:
-        return no_update, ui.alert("Add at least one item to the quotation.", 'warn'), no_update, no_update
-    if any(p is None for _, _, p, _ in lines):
-        return no_update, ui.alert("Every item needs a unit price (use 0 for items included free of charge).",
-                                   'warn'), no_update, no_update
+        return no_update, "Add at least one item to the quotation.", True, no_update, no_update
+    missing = [d or f"Line {i}" for i, (d, _, p, _) in enumerate(lines, start=1) if p is None]
+    if missing:
+        warning = [html.P("Every item needs a unit price (amount). Type 0 for items included free of charge.",
+                          className="mb-2"),
+                   html.Div("Missing a price:", className="fw-semibold small"),
+                   html.Ul([html.Li(m) for m in missing], className="small mb-0")]
+        return no_update, warning, True, no_update, no_update
     if not (to_block or '').strip():
-        return no_update, ui.alert("Fill in who the quotation is addressed to.", 'warn'), no_update, no_update
+        return no_update, "Fill in who the quotation is addressed to (the To box).", True, no_update, no_update
 
     page, title, total = print_docs.quotation_html(
         iq, to_block=to_block, subject=subject or f"Quotation for {_topic(iq)}",
@@ -1065,7 +1092,7 @@ def build_print_doc(n, kind, include, to_block, doc_day, subject, salutation, in
     _, _, label = print_docs.quote_totals(lines, vat_mode)
     add_inquiry_message(active_id, 'event', f"printed a quotation · {label}: PHP {print_docs.money(total)}",
                         author=author, author_email=s_email)
-    return {'html': page, 'title': title, 'n': nonce}, None, False, (refresh or 0) + 1
+    return {'html': page, 'title': title, 'n': nonce}, no_update, no_update, False, (refresh or 0) + 1
 
 
 # Loads the document into the hidden frame, waits for the font and logo, then opens the print dialog.

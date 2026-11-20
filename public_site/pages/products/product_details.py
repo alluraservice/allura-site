@@ -12,7 +12,7 @@ import dash_bootstrap_components as dbc
 
 import site_ui as ui
 from database.db_handler import SOURCE_PRODUCT, get_item_by_id
-from inquiry_forms import submit_inquiry
+from inquiry_forms import confirm_window, register_confirm_close, sending_state, submit_inquiry
 
 dash.register_page(__name__, path='/product-details', title='Allura Enterprise - Product Details')
 
@@ -72,6 +72,7 @@ def layout(id=None, **kwargs):
             html.Div(id='product-detail-content'),
         ], className="site-container narrow"),
         quote_modal,
+        confirm_window('quote'),
     ], className="site-shell")
 
 
@@ -202,10 +203,13 @@ def toggle_quote_modal(open_clicks, close_clicks, item_name, image_path):
     Output('quote-inquiry-modal', 'is_open', allow_duplicate=True),
     Output('quote-inquiry-feedback', 'children', allow_duplicate=True),
     Output('quote-inquiry-toast', 'children'),
+    Output('quote-done-modal', 'is_open'),
+    Output('quote-done-body', 'children'),
     *[Output(i, 'value') for i in FIELD_IDS],
     Input('btn-submit-inquiry', 'n_clicks'),
     *[State(i, 'value') for i in FIELD_IDS],
     State('modal-item-name-store', 'data'),
+    running=sending_state('btn-submit-inquiry'),
     prevent_initial_call=True,
 )
 def submit_quote_inquiry(n, customer, address, person, dept, phone, email, machine, remarks, item_name):
@@ -213,8 +217,12 @@ def submit_quote_inquiry(n, customer, address, person, dept, phone, email, machi
         raise dash.exceptions.PreventUpdate
     product = item_name or "a product"
     text = (machine or '').strip() or f"Requesting a quotation for {product}."
-    ok, message, _ref = submit_inquiry(SOURCE_PRODUCT, customer, address, person, dept, phone, email, text, remarks,
+    ok, message, _ref, window = submit_inquiry(SOURCE_PRODUCT, customer, address, person, dept, phone, email, text, remarks,
                                        source_detail=item_name)
     if ok:
-        return (False, None, html.Div(message, className="mb-3")) + ('',) * len(FIELD_IDS)
-    return (no_update, message, no_update) + (no_update,) * len(FIELD_IDS)
+        return (False, None, html.Div(message, className="mb-3"), True, window) + \
+            ('',) * len(FIELD_IDS)
+    return (no_update, message, no_update, True, window) + (no_update,) * len(FIELD_IDS)
+
+
+register_confirm_close('quote')

@@ -119,5 +119,7 @@ def handle_logout_modal(open_clicks, close_clicks, no_clicks, yes_clicks, is_ope
     if trigger_id in ['btn-close-logout-modal', 'btn-logout-no']:
         return (False,) + keep
     if trigger_id == 'btn-logout-yes':
+        from utils.auth import end_session
+        end_session()
         return False, '/home', None, None
     return (is_open,) + keep

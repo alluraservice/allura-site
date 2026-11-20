@@ -1,0 +1,34 @@
+# Uptime check (tracker item C-02)
+# Every 10 minutes GitHub opens the live website. If it does not answer within about 3 minutes
+# (allowing for the free plan waking up), the run fails and GitHub emails the repository admins
+# (Settings › Notifications › Actions: "Send notifications for failed workflows only").
+# Note: GitHub pauses scheduled workflows in a repository with no activity for 60 days; re-enable under Actions.
+name: Uptime check
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Open the website and the admin sign-in page
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://alluraenterpriseph.com' }}
+        run: |
+          for path in /home /contact_us; do
+            ok=0
+            for attempt in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$SITE_URL$path" || echo 000)
+              echo "$(date -u +%H:%M:%S) $path -> $code (attempt $attempt)"
+              if [ "$code" = "200" ]; then ok=1; break; fi
+              sleep 15
+            done
+            if [ "$ok" != "1" ]; then
+              echo "::error::$SITE_URL$path did not answer with 200. Follow SOP-11 E (website down)."
+              exit 1
+            fi
+          done

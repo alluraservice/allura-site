@@ -4,7 +4,7 @@ import dash_bootstrap_components as dbc
 
 import site_ui as ui
 from database.db_handler import SOURCE_SERVICE
-from inquiry_forms import submit_inquiry
+from inquiry_forms import confirm_window, register_confirm_close, sending_state, submit_inquiry
 from utils.site_content import get_content, lines
 
 # Text and the three service-area photos come from Admin › Website Content › Services
@@ -138,6 +138,7 @@ def layout(*args, **kwargs):
         header,
         html.Div([inquiry_card, areas, steps, lifecycle], className="site-container"),
         modal,
+        confirm_window('service'),
     ], className="site-shell")
 
 
@@ -168,15 +169,22 @@ def toggle_service_modal(_o1, _o2, _close):
     Output('service-inquiry-modal', 'is_open', allow_duplicate=True),
     Output('service-inquiry-feedback', 'children', allow_duplicate=True),
     Output('service-inquiry-toast', 'children'),
+    Output('service-done-modal', 'is_open'),
+    Output('service-done-body', 'children'),
     *[Output(i, 'value') for i in FIELD_IDS],
     Input('btn-submit-service-inquiry', 'n_clicks'),
     *[State(i, 'value') for i in FIELD_IDS],
+    running=sending_state('btn-submit-service-inquiry'),
     prevent_initial_call=True,
 )
 def submit_service_inquiry(n, customer, address, person, dept, phone, email, details, remarks):
     if not n:
         raise dash.exceptions.PreventUpdate
-    ok, message, _ref = submit_inquiry(SOURCE_SERVICE, customer, address, person, dept, phone, email, details, remarks)
+    ok, message, _ref, window = submit_inquiry(SOURCE_SERVICE, customer, address, person, dept, phone, email, details, remarks)
     if ok:
-        return (False, None, html.Div(message, className="mb-3")) + ('',) * len(FIELD_IDS)
-    return (no_update, message, no_update) + (no_update,) * len(FIELD_IDS)
+        return (False, None, html.Div(message, className="mb-3"), True, window) + \
+            ('',) * len(FIELD_IDS)
+    return (no_update, message, no_update, True, window) + (no_update,) * len(FIELD_IDS)
+
+
+register_confirm_close('service')

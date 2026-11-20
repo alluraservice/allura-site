@@ -74,6 +74,9 @@ def protect_and_render_dashboard(first_name, session_email):
     )
 
     stats = html.Div([
+        # UAT T8.1: "how many new inquiries came in today" now has its own counter
+        _stat('/admin/inquiries', "New today", counts.get('today', 0), "Inquiries received today",
+              'amber' if counts.get('today') else ''),
         _stat('/admin/inquiries', "Unread inquiries", counts.get('unread', 0), "Waiting in the inbox",
               'amber' if counts.get('unread') else ''),
         _stat('/admin/inquiries', "Urgent", counts.get('Urgent', 0), "Marked urgent, not resolved",

@@ -21,7 +21,7 @@
     .section-card { min-height: 0; }
     .section-card::before { background: linear-gradient(to bottom, rgba(0,0,0,.55) 0%, rgba(0,0,0,.8) 100%); }
 
-    /* ---------- Meet AlluBot: text first, robot below it (instead of on top of the text) ---------- */
+    /* ---------- Meet Allura Bot: text first, robot below it (instead of on top of the text) ---------- */
     .section-card-allubot { padding: 0; }
     .section-card-allubot .p-5 { padding: 28px 24px 8px !important; }
     .meet-allubot-img { position: static; padding: 0 0 18px !important; }

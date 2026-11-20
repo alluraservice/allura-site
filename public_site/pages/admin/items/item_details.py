@@ -132,6 +132,7 @@ def saved_toast(search):
     Output('admin-item-detail-refresh', 'data'),
     Output('admin-item-detail-toast', 'children', allow_duplicate=True),
     Output('admin-item-detail-toast', 'is_open', allow_duplicate=True),
+    Output('admin-item-detail-toast', 'className', allow_duplicate=True),
     Input('admin-item-toggle', 'n_clicks'),
     State('admin-item-detail-url', 'search'),
     State('admin-item-detail-refresh', 'data'),
@@ -145,11 +146,15 @@ def toggle_visibility(n, search, refresh):
         raise dash.exceptions.PreventUpdate
     now_active = item.get('is_active') is False
     set_item_active(item['id'], now_active)
-    return (refresh or 0) + 1, ("Back on the website." if now_active else "Hidden from the website."), True
+    return (refresh or 0) + 1, ("Back on the website." if now_active else "Hidden from the website."), True, \
+        "a-alert a-alert-ok mb-3"
 
 
 @callback(
     Output('admin-item-detail-redirect', 'href'),
+    Output('admin-item-detail-toast', 'children', allow_duplicate=True),
+    Output('admin-item-detail-toast', 'is_open', allow_duplicate=True),
+    Output('admin-item-detail-toast', 'className', allow_duplicate=True),
     Input('admin-item-delete', 'submit_n_clicks'),
     State('admin-item-detail-url', 'search'),
     prevent_initial_call=True,
@@ -158,6 +163,7 @@ def delete_this_item(n, search):
     if not n:
         raise dash.exceptions.PreventUpdate
     item_id = _item_id(search)
-    if item_id:
-        delete_item(item_id)
-    return "/admin/items?deleted=1"
+    ok, message = delete_item(item_id) if item_id else (False, "No item selected.")
+    if ok:
+        return "/admin/items?deleted=1", no_update, no_update, no_update
+    return no_update, message, True, "a-alert a-alert-err mb-3"

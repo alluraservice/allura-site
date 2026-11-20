@@ -1,6 +1,7 @@
 import sys
 import os
 import webbrowser
+from urllib.parse import quote
 
 # Fix sys.path before importing local modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -29,6 +30,7 @@ from pages import home
 from pages import about_us
 from pages import contact_us
 from pages import reset_password
+from pages import sign_in
 from pages.products import products
 from pages.products import product_list
 from pages.products import product_details
@@ -45,6 +47,9 @@ from pages.admin import accounts
 from pages.admin import my_account
 from pages.admin import website_content
 
+# Sign-in security: signed sessions, admin callback guard, default-password check (C-01)
+from utils.auth import configure as configure_auth, flag_default_password, session_matches
+
 app.layout = html.Div(
     [
         dcc.Location(id='url', refresh=False),
@@ -55,10 +60,13 @@ app.layout = html.Div(
         html.Div(id='page_content'),
         # Footer: public pages only (index.update_navbar fills it)
         html.Div(id='footer-container'),
-        # Floating AlluBot chat (public pages only; hidden on admin pages by 70_allubot.css)
+        # Floating Allura Bot chat (public pages only; hidden on admin pages by 70_allubot.css)
         allubot.widget(),
     ]
 )
+
+
+SIGN_IN_PATHS = ('/admin/login', '/login', '/admin/sign-in')
 
 
 def _render(module, *args):
@@ -66,10 +74,11 @@ def _render(module, *args):
     return lay(*args) if callable(lay) else lay
 
 
-def _signed_out():
-    """Admin pages need a signed-in account: send visitors to Home and open the Login pop-up."""
+def _signed_out(pathname):
+    """Admin pages need a signed-in account: send visitors to the sign-in page, then back to this page."""
     return html.Div([
-        dcc.Location(id='admin-guard-redirect', href='/home?login=1', refresh=True),
+        dcc.Location(id='admin-guard-redirect', href='/admin/login?next=' + quote(pathname or '/admin/dashboard'),
+                     refresh=True),
         html.Div("Please sign in to continue…", className="site-container text-center text-muted"),
     ])
 
@@ -77,15 +86,22 @@ def _signed_out():
 @app.callback(
     [Output('page_content', 'children')],
     [Input('url', 'pathname')],
-    [State('session-admin-email', 'data')]
+    [State('session-admin-email', 'data'), State('url', 'search')]
 )
-def displaypage(pathname, session_email):
+def displaypage(pathname, session_email, search):
     ctx = dash.callback_context
     if not ctx.triggered or not pathname:
         raise PreventUpdate
 
-    if pathname.startswith('/admin') and not session_email:
-        return [_signed_out()]
+    # Admin sign-in page (bookmarkable): open to everyone; already signed in → straight to the dashboard
+    if pathname in SIGN_IN_PATHS:
+        if session_matches(session_email):
+            return [dcc.Location(id='signin-skip', href='/admin/dashboard', refresh=True)]
+        return [sign_in.layout(search)]
+
+    # Admin pages need the signed server-side session to match this tab's sign-in (utils/auth.py)
+    if pathname.startswith('/admin') and not session_matches(session_email):
+        return [_signed_out(pathname)]
 
     if pathname in ('/', '/home'):
         returnlayout = _render(home)
@@ -143,9 +159,16 @@ def displaypage(pathname, session_email):
     Input('url', 'pathname')
 )
 def update_navbar(pathname):
+    if pathname in SIGN_IN_PATHS:
+        return None, None                           # the sign-in page stands on its own
     if pathname and pathname.startswith('/admin'):
         return admin_cm.admin_navbar, None          # no footer on the admin pages
     return cm.get_navbar(), cm.get_footer()
+
+
+# Must run after every page (and its callbacks) is imported
+configure_auth(app)
+flag_default_password()
 
 
 if __name__ == '__main__':

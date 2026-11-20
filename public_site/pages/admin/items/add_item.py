@@ -14,7 +14,7 @@ import dash_bootstrap_components as dbc
 from dash import Input, Output, State, callback, ctx, dcc, html, no_update
 
 import admin_ui as ui
-from database.db_handler import (DEFAULT_ITEM_IMAGE, create_item, delete_item, get_categories_with_types,
+from database.db_handler import (DEFAULT_ITEM_IMAGE, create_item, delete_item, find_item_by_name, get_categories_with_types,
                                  get_item_by_id, save_uploaded_image, update_item_full)
 from utils.media import MAX_UPLOAD_BYTES, process_upload, validate_upload
 
@@ -326,6 +326,8 @@ def render_preview(name, desc, category, modality, new_photo, current, cat_opts,
     State('item-photo-current', 'data'),
     State('item-f-active', 'value'),
     State('item-f-featured', 'value'),
+    running=[(Output('item-f-save', 'disabled'), True, False),
+             (Output('item-f-save', 'children'), "Saving…", "Save item")],
     prevent_initial_call=True,
 )
 def save_item(n, item_id, name, modality, desc, new_photo, current, active, featured):
@@ -339,6 +341,16 @@ def save_item(n, item_id, name, modality, desc, new_photo, current, active, feat
         problems.append("choose a category and modality")
     if problems:
         return ui.alert("Please " + " and ".join(problems) + ".", 'warn'), no_update
+
+    # One product per name in a modality. Pressing Save twice while the first save is still running
+    # opens the item that was just created instead of adding it again (UAT D-02).
+    same = find_item_by_name(name, int(modality), exclude_id=item_id)
+    if same:
+        if not item_id and (same.get('description') or '').strip() == (desc or '').strip():
+            return None, f"/admin/item-details?id={same['id']}&saved=1"
+        return ui.alert([f"An item named “{same['name']}” is already in this modality. ",
+                         dcc.Link("Open it", href=f"/admin/item-details?id={same['id']}"),
+                         " or use a different name."], 'warn'), no_update
 
     image_url = current or DEFAULT_ITEM_IMAGE
     if new_photo:
@@ -365,6 +377,7 @@ def save_item(n, item_id, name, modality, desc, new_photo, current, active, feat
 
 @callback(
     Output('item-f-redirect', 'href', allow_duplicate=True),
+    Output('item-f-feedback', 'children', allow_duplicate=True),
     Input('item-f-delete', 'submit_n_clicks'),
     State('item-f-id', 'data'),
     prevent_initial_call=True,
@@ -372,5 +385,7 @@ def save_item(n, item_id, name, modality, desc, new_photo, current, active, feat
 def delete_from_editor(n, item_id):
     if not n or not item_id:
         raise dash.exceptions.PreventUpdate
-    delete_item(item_id)
-    return "/admin/items?deleted=1"
+    ok, message = delete_item(item_id)
+    if ok:
+        return "/admin/items?deleted=1", no_update
+    return no_update, ui.alert(message, 'err')

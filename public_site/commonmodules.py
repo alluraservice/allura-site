@@ -10,6 +10,7 @@ from database.db_handler import authenticate, create_password_reset, find_accoun
 from utils.mailer import send_password_reset_link, site_url
 from utils.security import new_reset_token
 from utils.site_content import settings as site_settings
+from utils.auth import start_session
 
 RESET_MINUTES = 60
 NAV_LINKS = [('Home', '/home'), ('About Us', '/about_us'), ('Products', '/products'),
@@ -64,8 +65,8 @@ navbar = [
                     ),
                     html.A(html.Img(src=app.get_asset_url('icons/my_account.svg'), alt='Login'),
                            href='#', id='btn-open-login-modal', title='Login', className='btn-nav-icon'),
-                    html.A(html.Img(src=app.get_asset_url('icons/allubot1.svg'), alt='AlluBot'),
-                           href='#', id='open_allubot_btn', title='AlluBot', className='btn-nav-icon'),
+                    html.A(html.Img(src=app.get_asset_url('icons/allubot1.svg'), alt='Allura Bot'),
+                           href='#', id='open_allubot_btn', title='Allura Bot', className='btn-nav-icon'),
                 ], className='nav-actions'),
             ], fluid=True, className='d-flex align-items-center justify-content-between w-100 px-4 gap-3'),
             color='white', className='main-nav-bar shadow-sm py-2'
@@ -169,18 +170,34 @@ def switch_login_views(_open, _close, _forgot, _back):
 def sign_in(_clicks, _enter, email, password):
     if not ctx.triggered or not ctx.triggered[0].get('value'):
         raise dash.exceptions.PreventUpdate
-    keep = (no_update, no_update, no_update, no_update)
+    ok, result = attempt_sign_in(email, password)
+    if not ok:
+        return no_update, no_update, no_update, no_update, result
+    return False, result['target'], result['first_name'], result['email'], None
+
+
+def attempt_sign_in(email, password, next_path=None):
+    """
+    Checks an email and password (used by the Login pop-up and the /admin/login page).
+    Returns (True, {'target', 'first_name', 'email'}) or (False, message component).
+    """
     if not (email or '').strip() or not password:
-        return keep + (html.Div("Please enter your email and password.", className="a-alert a-alert-warn"),)
+        return False, html.Div("Please enter your email and password.", className="a-alert a-alert-warn")
 
     account, error = authenticate(email.strip(), password)
     if not account:
-        return keep + (html.Div(error or "Incorrect email or password.", className="a-alert a-alert-err"),)
+        return False, html.Div(error or "Incorrect email or password.", className="a-alert a-alert-err")
 
+    start_session(account)   # signed server-side session (utils/auth.py)
     first_name = (account.get('name') or email.split('@')[0]).split(' ')[0]
     # Store BOTH name and login email: every admin page (My Account, Inquiries, Accounts…) reads the email
-    target = '/admin/my-account' if account.get('must_change_password') else '/admin/dashboard'
-    return False, target, first_name, account['email'], None
+    if account.get('must_change_password'):
+        target = '/admin/my-account'
+    elif next_path and next_path.startswith('/admin/') and next_path != '/admin/login':
+        target = next_path                       # back to the admin page they bookmarked or opened
+    else:
+        target = '/admin/dashboard'
+    return True, {'target': target, 'first_name': first_name, 'email': account['email']}
 
 
 # ==========================================
@@ -196,6 +213,11 @@ def sign_in(_clicks, _enter, email, password):
 def send_recovery(_clicks, _enter, email):
     if not ctx.triggered or not ctx.triggered[0].get('value'):
         raise dash.exceptions.PreventUpdate
+    return recovery_message(email)
+
+
+def recovery_message(email):
+    """Emails a one-time reset link if the address belongs to an admin account (pop-up and /admin/login)."""
     email = (email or '').strip()
     if '@' not in email or '.' not in email.split('@')[-1]:
         return html.Div("Please enter a valid email address.", className="a-alert a-alert-warn")

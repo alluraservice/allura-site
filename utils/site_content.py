@@ -8,7 +8,7 @@ Text, lists and photos that used to be written into the page files are now store
     home      - Home page text
     about     - About Us text, timeline and leaders
     services  - Services page text
-    allubot   - AlluBot greeting and the wording of its questions and answers
+    allubot   - Allura Bot greeting and the wording of its questions and answers
 
 DEFAULTS below holds the content the website had before the editor existed. A section that was
 never saved in the admin site simply shows its default, so the website looks the same after this
@@ -34,16 +34,18 @@ DEFAULTS = {
         'email': "info@alluraenterpriseph.com",
         'website': "alluraenterpriseph.com",
         'location_short': "BGC, Taguig City, Philippines",
+        'head_office': "Bonifacio Global City (BGC), Taguig City",
+        'head_office_label': "BGC, Taguig City",
+        'head_map_url': "https://maps.google.com/maps?q=Bonifacio%20Global%20City%2C%20Taguig%20City&z=15&output=embed",
         'main_office': "Doña Paz Village, Cruzada, Legazpi City",
         'main_office_label': "Legazpi City",
-        'satellite_office': "Villa Angelina Phase 1, Mambog 4, Bacoor Cavite",
-        'satellite_office_label': "Bacoor, Cavite",
         'main_map_url': ("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3880.799757751662!2d123.7385!3d13.1391"
                          "!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zRGHDusOZIFBheiBTdWJkaXZpc2lvbiwgQ3J1emFkYSwgTGVnYXpwaSBDaXR5"
                          "!5e0!3m2!1sen!2sph!4v1620000000000!5m2!1sen!2sph"),
-        'satellite_map_url': ("https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3863.3121542122!2d120.9542!3d14.4445"
-                              "!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zVmlsbGEgQW5nZWxpYSBQaGFzZSAxLCBNYW1ib2cgNCwgQmFjb29yLCBDYXZpdGU"
-                              "!5e0!3m2!1sen!2sph!4v1620000000000!5m2!1sen!2sph"),
+        # Removed after the UAT on Nov 17; fill these in Website Content to show a third office again
+        'satellite_office': "",
+        'satellite_office_label': "",
+        'satellite_map_url': "",
         'facebook_url': "https://www.facebook.com/profile.php?id=61589813960476",
         'linkedin_url': "https://www.linkedin.com/company/allura-enterprise/",
         'footer_text': ("Allura Enterprise is a premier Philippine medical equipment distributor and service provider, "
@@ -113,8 +115,8 @@ DEFAULTS = {
                          "our team is ready to assist you."),
         'follow_title': "Stay Connected With Allura",
         'follow_text': "Follow our journey, catch our latest industry updates, and connect with our team on social media.",
-        'allubot_title': "Meet AlluBot, your quick guide to Allura",
-        'allubot_text': ("Not sure where to start? Pick a topic and AlluBot will point you to the right "
+        'allubot_title': "Meet Allura Bot, your quick guide to Allura",
+        'allubot_text': ("Not sure where to start? Pick a topic and Allura Bot will point you to the right "
                          "products, services or person to talk to."),
     },
 
@@ -198,10 +200,10 @@ DEFAULTS = {
                            "will get back to you with the right engineer."),
     },
 
-    # ------------------------------------------------------------------ AlluBot
+    # ------------------------------------------------------------------ Allura Bot
     # Only what was changed in the admin site is stored here; the full question list lives in allubot.py.
     'allubot': {
-        'greeting': "Hi! I'm AlluBot. 👋\nChoose a topic below and I'll point you in the right direction.",
+        'greeting': "Hi! I'm Allura Bot. 👋\nChoose a topic below and I'll point you in the right direction.",
         'answers': {},
     },
 }
@@ -286,13 +288,22 @@ def restore_defaults(section, saved_by=None):
 
 
 def fill(text, s=None):
-    """Replaces {phone}, {email}, {main_office}, {satellite_office}, {company} in AlluBot answers and templates."""
+    """
+    Replaces {phone}, {email}, {head_office}, {main_office}, {satellite_office}, {company} in Allura Bot answers
+    and templates. A line whose detail is empty (e.g. no satellite office) is left out.
+    """
     s = s or settings()
-    text = str(text or '')
-    for key, val in (('{phone}', s.get('phone')), ('{email}', s.get('email')), ('{main_office}', s.get('main_office')),
-                     ('{satellite_office}', s.get('satellite_office')), ('{company}', s.get('company_name'))):
-        text = text.replace(key, val or '')
-    return text
+    keys = (('{phone}', s.get('phone')), ('{email}', s.get('email')), ('{head_office}', s.get('head_office')),
+            ('{main_office}', s.get('main_office')), ('{satellite_office}', s.get('satellite_office')),
+            ('{company}', s.get('company_name')))
+    out = []
+    for line in str(text or '').split('\n'):
+        if any(k in line and not str(v or '').strip() for k, v in keys):
+            continue
+        for k, v in keys:
+            line = line.replace(k, str(v or ''))
+        out.append(line)
+    return '\n'.join(out)
 
 
 def lines(text):

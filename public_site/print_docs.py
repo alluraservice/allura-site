@@ -19,6 +19,14 @@ from app import app
 from utils.site_content import settings as site_settings
 
 
+import os
+
+# Quotations carry a DRAFT label until the Operations Team validates the format and terms (tracker M4-06).
+# After their sign-off, set QUOTATION_VALIDATED=1 on the Render web service (or change this line) to remove it.
+QUOTATION_DRAFT = os.environ.get('QUOTATION_VALIDATED', '') != '1'
+DRAFT_TEXT = "DRAFT – for internal review only. Not for sending to clients until validated by the Operations Team."
+
+
 class _Company:
     """Letterhead details, read from Admin › Website Content › Site settings each time a document is printed."""
     _KEYS = {'name': 'company_name', 'address': 'main_office', 'phone': 'phone', 'email': 'email', 'web': 'website'}
@@ -187,6 +195,10 @@ table.totals tr.grand td:first-child { color: #084008; }
 .terms .k { color: #66766a; }
 .sign { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 18px; }
 .sign .line { border-top: 1px solid #1f2e1f; margin-top: 26px; padding-top: 4px; }
+.draft-mark { position: fixed; top: 42%; left: 0; right: 0; text-align: center; transform: rotate(-30deg);
+  font-size: 96pt; font-weight: 800; letter-spacing: .12em; color: rgba(192, 57, 43, .13); z-index: 0; pointer-events: none; }
+.draft-banner { border: 1.5px solid #c0392b; color: #9a2a16; background: #fdece7; padding: 6px 10px; margin: 0 0 12px;
+  font-size: 9pt; font-weight: 700; border-radius: 4px; }
 .sign .cap { font-size: 8.5pt; letter-spacing: .08em; text-transform: uppercase; color: #66766a; }
 """)
 
@@ -313,6 +325,8 @@ def quotation_html(iq, *, to_block, subject, salutation, intro, rows, vat_mode='
                f"quoting reference {escape(ref)}.")
 
     body = [
+        (f"<div class='draft-mark'>DRAFT</div><div class='draft-banner'>{escape(DRAFT_TEXT)}</div>"
+         if QUOTATION_DRAFT else ""),
         f"<div class='to'><span class='muted'>To:</span><br><b>{_e(to_block)}</b></div>",
         f"<div class='subject'>Subject: {_e(subject)}</div>",
         f"<p>{_e(salutation)}</p>",
@@ -333,4 +347,6 @@ def quotation_html(iq, *, to_block, subject, salutation, intro, rows, vat_mode='
     ]
     foot = f"{COMPANY['name']} · {escape(COMPANY['address'])} · {COMPANY['web']}"
     title = f"{ref} Quotation - {iq.get('customer_name') or ''}".strip(' -')
+    if QUOTATION_DRAFT:
+        title = "DRAFT " + title
     return _page(title, header, "\n".join(body), foot, ref), title, total

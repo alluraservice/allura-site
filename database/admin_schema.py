@@ -188,6 +188,12 @@ ADMIN_SCHEMA_STEPS = [
     );
     """,
 
+    # ---------- Login lockout (C-01): counts wrong passwords in a row, locks for 15 minutes after 5
+    """
+    ALTER TABLE accounts ADD COLUMN IF NOT EXISTS failed_logins INTEGER DEFAULT 0;
+    ALTER TABLE accounts ADD COLUMN IF NOT EXISTS locked_until TIMESTAMP;
+    """,
+
     # ---------- Website Content editor (Admin › Website Content, utils/site_content.py) ----------
     # One row per section (settings, home, about, services, allubot). A section with no row shows the
     # original content written in utils/site_content.py, so nothing changes until someone saves.
@@ -319,6 +325,15 @@ BEGIN
     WHERE NOT EXISTS (SELECT 1 FROM items i WHERE LOWER(i.name) = LOWER(v.name));
 END
 $$;
+"""),
+    # UAT Nov 17 (T1.5, T3.1): offices are now Head office (BGC) and Main office (Legazpi), the satellite
+    # office is removed, and the chat helper is called "Allura Bot". Saved Website Content is updated to match.
+    ("2026_11_20_uat_offices_and_allura_bot", """
+UPDATE site_content
+   SET value = value || '{"satellite_office": "", "satellite_office_label": "", "satellite_map_url": ""}'::jsonb
+ WHERE key = 'settings';
+UPDATE site_content SET value = replace(value::text, 'AlluBot', 'Allura Bot')::jsonb
+ WHERE value::text LIKE '%AlluBot%';
 """),
 ]
 

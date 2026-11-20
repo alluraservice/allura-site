@@ -4,17 +4,17 @@ Admin › Website Content   (/admin/website)
 Lets Allura staff change the website's words and photos without editing code:
 
     Site settings  - phone, email, offices, map links, social links, footer text.
-                     Used everywhere: top bar, footer, Contact Us, AlluBot, printed letterhead, email footers.
+                     Used everywhere: top bar, footer, Contact Us, Allura Bot, printed letterhead, email footers.
     Home           - hero, section titles, "What we do" cards, stats, "Why Allura", steps, bottom cards
     About Us       - banner, stats, "Who we are", capabilities, timeline, leaders (with photos)
     Services       - banner, the three service areas (with photos), steps, closing band
-    AlluBot        - greeting and the wording of every question and answer
+    Allura Bot        - greeting and the wording of every question and answer
 
 How the editor works
 - Each tab edits one section. Edits are kept while switching tabs, but only "Save changes" puts them
   on the website (the public pages read utils/site_content.py, cached for up to 20 seconds).
 - Lists (stats, timeline, leaders…) have "+ Add" and "Remove" buttons, except lists with a fixed
-  layout (the three Home cards, the three service areas and the AlluBot questions).
+  layout (the three Home cards, the three service areas and the Allura Bot questions).
 - "Undo last save" goes back one save. "Restore original" brings back the content the website had
   before this editor existed. Every save is kept in site_content_history.
 """
@@ -33,7 +33,7 @@ from utils.site_content import (DEFAULTS, get_content, last_saved, restore_defau
 dash.register_page(__name__, path='/admin/website')
 
 TABS = [('settings', 'Site settings'), ('home', 'Home'), ('about', 'About Us'), ('services', 'Services'),
-        ('allubot', 'AlluBot')]
+        ('allubot', 'Allura Bot')]
 TAB_NAMES = dict(TABS)
 VIEW_LINKS = {'settings': '/contact_us', 'home': '/home', 'about': '/about_us', 'services': '/services', 'allubot': '/home'}
 
@@ -51,20 +51,24 @@ POINTS_HELP = "One point per line."
 
 SCHEMA = {
     'settings': [
-        ('head', "Contact details", "Shown in the top green bar, the footer, Contact Us, AlluBot, printed "
+        ('head', "Contact details", "Shown in the top green bar, the footer, Contact Us, Allura Bot, printed "
                                     "quotations and inquiry records, reply signatures and email footers."),
         ('text', 'company_name', "Company name", "Footer copyright line, letterhead and signatures."),
         ('text', 'phone', "Phone number", "Write it the way visitors should read it, e.g. +63 917 770 1820."),
         ('text', 'email', "Email address", None),
         ('text', 'website', "Website address", "Printed on quotations, without https://."),
         ('text', 'location_short', "Short location", "Top green bar and footer, e.g. “BGC, Taguig City, Philippines”."),
-        ('head', "Offices and maps", "Shown on Contact Us. The main office address is also the letterhead address."),
+        ('head', "Offices and maps", "Shown on Contact Us and in Allura Bot. The main office address is also the "
+                                     "letterhead address. Leave an address empty to hide that office."),
+        ('area', 'head_office', "Head office address", None),
+        ('text', 'head_office_label', "Head office map title", "e.g. BGC, Taguig City"),
+        ('area', 'head_map_url', "Head office map link (embed)",
+         "Google Maps › Share › Embed a map › copy only the link inside src=\"…\"."),
         ('area', 'main_office', "Main office address", None),
         ('text', 'main_office_label', "Main office map title", "e.g. Legazpi City"),
-        ('area', 'main_map_url', "Main office map link (embed)",
-         "Google Maps › Share › Embed a map › copy only the link inside src=\"…\"."),
-        ('area', 'satellite_office', "Satellite office address", "Leave empty to hide the satellite office."),
-        ('text', 'satellite_office_label', "Satellite office map title", "e.g. Bacoor, Cavite"),
+        ('area', 'main_map_url', "Main office map link (embed)", None),
+        ('area', 'satellite_office', "Satellite office address (optional)", "Leave empty to hide the satellite office."),
+        ('text', 'satellite_office_label', "Satellite office map title", None),
         ('area', 'satellite_map_url', "Satellite office map link (embed)", None),
         ('head', "Social media and footer", None),
         ('text', 'facebook_url', "Facebook page link", None),
@@ -101,8 +105,8 @@ SCHEMA = {
         ('area', 'contact_text', "Contact card text", None),
         ('text', 'follow_title', "Social media card title", None),
         ('area', 'follow_text', "Social media card text", None),
-        ('text', 'allubot_title', "AlluBot card title", None),
-        ('area', 'allubot_text', "AlluBot card text", None),
+        ('text', 'allubot_title', "Allura Bot card title", None),
+        ('area', 'allubot_text', "Allura Bot card text", None),
     ],
     'about': [
         ('head', "Banner", None),
@@ -145,8 +149,8 @@ SCHEMA = {
         ('area', 'lifecycle_text', "Text", None),
     ],
     'allubot': [
-        ('head', "Greeting", "AlluBot's first message. You can write {phone}, {email}, {main_office} or "
-                             "{satellite_office}; they are replaced with the details in Site settings."),
+        ('head', "Greeting", "Allura Bot's first message. You can write {phone}, {email}, {head_office}, "
+                             "{main_office} or {satellite_office}; they are replaced with the details in Site settings."),
         ('area', 'greeting', "Greeting", None),
         ('head', "Questions and answers", "Change the words only. Adding a new question or changing which questions "
                                           "follow each other is done in the code (SOP-12). Clear a field to go back "
@@ -179,7 +183,7 @@ def _load(section):
 
 
 def _to_store(section, data):
-    """The editor's data as it is saved (AlluBot keeps only what differs from the code)."""
+    """The editor's data as it is saved (Allura Bot keeps only what differs from the code)."""
     if section != 'allubot':
         return data
     tree = _allubot_tree()
@@ -529,7 +533,8 @@ def _validate(section, data):
         if data.get('email') and '@' not in data['email']:
             problems.append("check the email address")
         for key, label in (('facebook_url', 'Facebook'), ('linkedin_url', 'LinkedIn'),
-                           ('main_map_url', 'main office map'), ('satellite_map_url', 'satellite office map')):
+                           ('main_map_url', 'main office map'), ('head_map_url', 'head office map'),
+                           ('satellite_map_url', 'satellite office map')):
             v = str(data.get(key) or '').strip()
             if v and not v.startswith('https://'):
                 problems.append(f"the {label} link must start with https://")

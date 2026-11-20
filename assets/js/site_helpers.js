@@ -83,9 +83,9 @@ if (document.readyState === 'loading') {
     observeCarousel();
 }
 
-/* AlluBot open / close.
-   Opened by the navbar AlluBot icon (#open_allubot_btn, toggles) and the
-   "Chat with AlluBot" button on Home (#home_open_chatbot_btn, always opens).
+/* Allura Bot open / close.
+   Opened by the navbar Allura Bot icon (#open_allubot_btn, toggles) and the
+   "Chat with Allura Bot" button on Home (#home_open_chatbot_btn, always opens).
    Done in the browser so it works on every page without extra callbacks. */
 (function () {
     function panel() { return document.getElementById('allubot-panel'); }
@@ -126,4 +126,59 @@ if (document.readyState === 'loading') {
         var p = panel();
         if (e.key === 'Escape' && p && p.classList.contains('open')) { setOpen(false); }
     });
+})();
+
+/* Scroll reveal (Nov 20, 2026): on public pages, sections and cards fade up as they come into view.
+   Styles are in 10_motion.css. Skipped when the visitor's device asks for reduced motion. */
+(function () {
+    if (!('IntersectionObserver' in window)) { return; }
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { return; }
+
+    var SELECTOR = [
+        '.site-shell .site-section-head',
+        '.site-shell .a-card',
+        '.site-shell .section-card',
+        '.site-shell .category-card',
+        '.site-shell .item-tile',
+        '.site-shell .tl-item',
+        '.site-shell .stat',
+        '.site-shell .leader'
+    ].join(', ');
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) { return; }
+            var el = entry.target;
+            el.classList.add('is-in');
+            io.unobserve(el);
+            // Once it has arrived, hand the element back to its normal hover effects
+            setTimeout(function () {
+                el.classList.remove('reveal', 'is-in');
+                el.style.removeProperty('--reveal-delay');
+            }, 1100);
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+    function scan() {
+        document.querySelectorAll(SELECTOR).forEach(function (el) {
+            if (el.dataset.revealed) { return; }
+            if (el.closest('.cards-scroll-container, .modal, .reveal')) { return; }   // carousels, pop-ups, nested
+            el.dataset.revealed = '1';
+            // Cards in the same row arrive one after another
+            var siblings = el.parentElement ? Array.prototype.filter.call(el.parentElement.children, function (c) {
+                return c.matches(SELECTOR);
+            }) : [];
+            var i = Math.max(0, siblings.indexOf(el));
+            el.style.setProperty('--reveal-delay', (Math.min(i, 5) * 80) + 'ms');
+            el.classList.add('reveal');
+            io.observe(el);
+        });
+    }
+
+    var timer = null;
+    new MutationObserver(function () {
+        clearTimeout(timer);
+        timer = setTimeout(scan, 50);
+    }).observe(document.body, { childList: true, subtree: true });
+    scan();
 })();

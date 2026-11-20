@@ -232,20 +232,40 @@ INQUIRY_LABELS = ['Quotation Sent', 'Follow-up', 'Site Visit', 'Demo Request',
                   'Service Contract', 'Warranty', 'Government / Bidding']
 
 
+DUPLICATE_WINDOW_MINUTES = 10
+
+
 def create_inquiry(customer_name, address, contact_person, department, phone, email, machine_inquiry, remarks,
                    source=SOURCE_CONTACT, source_detail=None):
     """
     Saves a customer inquiry from one of the website forms.
     Returns {'id': ..., 'reference_no': 'ALR-2610-00042'} or None.
     The reference number is set by the database trigger (see admin_schema.py).
+
+    The same inquiry sent again within DUPLICATE_WINDOW_MINUTES (e.g. the Submit button pressed twice
+    while the page was still working) is not saved twice: the first one is returned instead (UAT D-01).
     """
+    source = source if source in INQUIRY_SOURCES else SOURCE_CONTACT
+    existing = _run(f"""
+        SELECT id, reference_no FROM inquiries
+        WHERE LOWER(COALESCE(email, '')) = LOWER(%s)
+          AND COALESCE(customer_name, '') = %s
+          AND COALESCE(machine_inquiry, '') = %s
+          AND COALESCE(source, '') = %s
+          AND COALESCE(source_detail, '') = COALESCE(%s, '')
+          AND created_at >= NOW() - INTERVAL '{DUPLICATE_WINDOW_MINUTES} minutes'
+        ORDER BY id DESC LIMIT 1;
+    """, [email or '', customer_name or '', machine_inquiry or '', source, source_detail], fetch='one')
+    if existing:
+        existing['duplicate'] = True
+        return existing
     return _run("""
         INSERT INTO inquiries (customer_name, address, contact_person, department, phone, email,
                                machine_inquiry, remarks, status, source, source_detail, priority, is_read)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, 'New', %s, %s, 'Normal', FALSE)
         RETURNING id, reference_no;
     """, [customer_name, address, contact_person, department, phone, email, machine_inquiry, remarks,
-          source if source in INQUIRY_SOURCES else SOURCE_CONTACT, source_detail], fetch='one', commit=True)
+          source, source_detail], fetch='one', commit=True)
 
 
 def insert_inquiry(customer_name, address, contact_person, department, phone, email, machine_inquiry, remarks,
@@ -419,7 +439,8 @@ def get_inquiry_folder_counts(me_id=None):
             COUNT(*) FILTER (WHERE {_NOT_ARCHIVED} AND COALESCE(i.source, 'Contact Us') = 'Product Page') AS "source:Product Page",
             COUNT(*) FILTER (WHERE {_NOT_ARCHIVED} AND COALESCE(i.source, 'Contact Us') = 'Service Page') AS "source:Service Page",
             COUNT(*) FILTER (WHERE {_NOT_ARCHIVED} AND COALESCE(i.source, 'Contact Us') = 'Contact Us') AS "source:Contact Us",
-            COUNT(*) FILTER (WHERE COALESCE(i.is_archived, FALSE)) AS archived
+            COUNT(*) FILTER (WHERE COALESCE(i.is_archived, FALSE)) AS archived,
+            COUNT(*) FILTER (WHERE i.created_at >= date_trunc('day', NOW())) AS today
         FROM inquiries i;
     """, [me_id or -1], fetch='one') or {}
     return {k: int(v or 0) for k, v in row.items()}
@@ -591,7 +612,8 @@ def update_account_profile(account_id, name, personal_email, contact_number):
 
 def set_account_password(account_id, password_hash, must_change=False):
     ok = _run("""
-        UPDATE accounts SET password_hash = %s, must_change_password = %s, password_changed_at = NOW()
+        UPDATE accounts SET password_hash = %s, must_change_password = %s, password_changed_at = NOW(),
+                            failed_logins = 0, locked_until = NULL
         WHERE id = %s;
     """, [password_hash, must_change, account_id], fetch='none', commit=True)
     # Keep the legacy login table in sync so old logins can't use a stale password
@@ -614,13 +636,30 @@ def authenticate(email, password):
     """
     from utils.security import check_password  # local import keeps db_handler importable without bcrypt
 
+    from utils.auth import LOCK_MINUTES, MAX_FAILED_LOGINS, lock_message
+
     email = (email or '').strip()
     acc = get_account_by_email(email)
     if acc and acc.get('password_hash'):
+        # Login lockout (C-01): refuse while the account is locked, even with the right password
+        mins_left = _run("""SELECT EXTRACT(EPOCH FROM (locked_until - NOW())) / 60.0 FROM accounts
+                            WHERE id = %s AND locked_until IS NOT NULL AND locked_until > NOW();""",
+                         [acc['id']], fetch='scalar')
+        if mins_left:
+            return None, lock_message(float(mins_left))
         if not check_password(password, acc['password_hash']):
+            fails = _run("""UPDATE accounts SET failed_logins = COALESCE(failed_logins, 0) + 1,
+                                   locked_until = CASE WHEN COALESCE(failed_logins, 0) + 1 >= %s
+                                                       THEN NOW() + (%s || ' minutes')::interval ELSE locked_until END
+                            WHERE id = %s RETURNING failed_logins;""",
+                         [MAX_FAILED_LOGINS, str(LOCK_MINUTES), acc['id']], fetch='scalar', commit=True)
+            if fails and fails >= MAX_FAILED_LOGINS:
+                return None, lock_message(LOCK_MINUTES)
             return None, "Incorrect email or password."
         if (acc.get('status') or 'Active') != 'Active':
             return None, "This account is inactive. Please contact an administrator."
+        _run("UPDATE accounts SET failed_logins = 0, locked_until = NULL WHERE id = %s;", [acc['id']],
+             fetch='none', commit=True)
         record_login(acc['id'])
         return acc, None
 
@@ -867,6 +906,13 @@ def delete_image_if_unused(image_url):
         _run("DELETE FROM uploaded_images WHERE id = %s;", [mid], fetch='none', commit=True)
 
 
+def find_item_by_name(name, modality_id, exclude_id=None):
+    """An item with the same name (any letter case) in the same modality, or None."""
+    return _run("""SELECT id, name, description FROM items
+                   WHERE LOWER(TRIM(name)) = LOWER(TRIM(%s)) AND modality_id = %s AND id <> COALESCE(%s, -1)
+                   ORDER BY id LIMIT 1;""", [name, modality_id, exclude_id], fetch='one')
+
+
 def create_item(name, modality_id, description, image_url, is_active=True, is_featured=False):
     return _run("""
         INSERT INTO items (name, modality_id, description, image_url, is_active, is_featured)
@@ -904,11 +950,52 @@ def set_item_active(item_id, active):
 
 
 def delete_item(item_id):
+    """
+    Deletes an item permanently. Returns (ok, message).
+    Rows in other tables that point at the item are unlinked first (their link is cleared) when the
+    database allows it; if a link can't be cleared, nothing is deleted and the message says where
+    the item is still used (UAT D-03).
+    """
+    import psycopg2
     old = get_item_by_id(item_id)
-    ok = _run("DELETE FROM items WHERE id = %s;", [item_id], fetch='none', commit=True)
-    if ok and old:
-        delete_image_if_unused(old.get('image_url'))
-    return ok
+    if not old:
+        return False, "This item no longer exists. It may already have been deleted."
+    db = None
+    try:
+        db = getdblocation()
+        cur = db.cursor()
+        # Every column in another table that references items.id
+        cur.execute("""
+            SELECT c.conrelid::regclass::text AS tbl, a.attname AS col, NOT a.attnotnull AS nullable
+            FROM pg_constraint c
+            JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
+            WHERE c.contype = 'f' AND c.confrelid = 'items'::regclass;
+        """)
+        for tbl, col, nullable in cur.fetchall():
+            if nullable:
+                cur.execute(f'UPDATE {tbl} SET "{col}" = NULL WHERE "{col}" = %s;', [item_id])
+        cur.execute("DELETE FROM items WHERE id = %s;", [item_id])
+        deleted = cur.rowcount
+        db.commit()
+    except psycopg2.errors.ForeignKeyViolation as e:
+        if db:
+            db.rollback()
+        table = getattr(getattr(e, 'diag', None), 'table_name', None) or 'another table'
+        print(f"[db] delete_item({item_id}) blocked: {e}")
+        return False, (f"“{old['name']}” couldn't be deleted because it is still used in {table}. "
+                       "Hide it instead, or ask the developer to remove that link.")
+    except Exception as e:
+        if db:
+            db.rollback()
+        print(f"[db] delete_item({item_id}) failed: {e}")
+        return False, f"“{old['name']}” couldn't be deleted (database error). Please try again."
+    finally:
+        if db:
+            db.close()
+    if not deleted:
+        return False, "This item no longer exists. It may already have been deleted."
+    delete_image_if_unused(old.get('image_url'))
+    return True, f"Deleted “{old['name']}”."
 
 
 def get_item_counts():
